@@ -1,0 +1,18 @@
+export(        parfm, 
+            ci.parfm,
+         print.parfm,
+        logLik.parfm,
+       predict.parfm, 
+  plot.predict.parfm, 
+ print.predict.parfm, 
+        select.parfm, 
+   plot.select.parfm, 
+  print.select.parfm)
+  
+S3method(print, parfm)
+S3method(logLik, parfm)
+S3method(predict, parfm)
+S3method(plot, predict.parfm)
+S3method(print, predict.parfm)
+S3method(plot, select.parfm)
+S3method(print, select.parfm)
