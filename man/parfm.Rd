@@ -1,6 +1,7 @@
 \name{parfm}
 \alias{parfm}
 \alias{print.parfm}
+\alias{plot.parfm}
 \alias{logLik.parfm}
 \title{Parametric Frailty Models}
 \description{Fits parametric Frailty Models by maximizing the marginal likelihood.}
@@ -123,6 +124,7 @@ biostatistics series. Taylor and Francis.
 
 \examples{
 library(parfm)
+
 #------Kidney dataset------
 data(kidney) 
  # type 'help(kidney)' for a description of the data set
@@ -138,19 +140,17 @@ parfm(Surv(time,status) ~ sex + age, cluster="id",
       data=kidney, dist="gompertz", frailty="possta", method="Nelder-Mead")
 #--------------------------
 
+\donttest{
+#------Asthma dataset------
+data(asthma)
+head(asthma)
+  # type 'help(asthma)' for a description of the data set
 
-
-#------Channing House dataset------
-library(boot)
-data(channing) 
- # type 'help(channing)' for a description of the data set
- # the life durations (exit) are left truncated since the data set 
- # does not include those individuals who died before entering Channing House
-
-channing <- channing[-which(channing$entry >= channing$exit), ]
-parfm(Surv(entry, exit, cens) ~ sex,
-      data=channing, dist="weibull", frailty="none")
-#----------------------------------
+parfm(Surv(Begin, End, Status)~Drug, cluster="Patid", 
+      data=asthma[asthma$Fevent==0,],
+      dist="lognormal", frailty="ingau")
+#--------------------------
+}
 }
 
 \keyword{survival}

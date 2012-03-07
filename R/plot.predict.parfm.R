@@ -12,7 +12,7 @@
 #            or any other value for keeping the current order                  #
 #                                                                              #
 #   Date: February 02, 2012                                                    #
-#   Last modification on: February 16, 2012                                    #
+#   Last modification on: February 23, 2012                                    #
 ################################################################################
 
 plot.predict.parfm <- function(x, sort="i", 
@@ -20,6 +20,7 @@ plot.predict.parfm <- function(x, sort="i",
                                sub=NULL,
                                cex.axis=1,
                                hline=1,
+                               ylim=NULL,
                                ...){
   library(graphics)
   xlab = attr(x, "clustname")
@@ -35,6 +36,10 @@ plot.predict.parfm <- function(x, sort="i",
     x <- sort(x, decreasing=FALSE)
   else if (sort == "d")
     x <- sort(x, decreasing=TRUE)
+  
+  if (is.null(ylim))
+    ylim <- c(0, max(as.numeric(x)))
+  
   plot(1, ty="n", 
        ylab="Predicted frailty value", 
        xlab=xlab,
@@ -42,7 +47,7 @@ plot.predict.parfm <- function(x, sort="i",
        sub=sub,
        xaxt="n",
        xlim=c(1, length(as.numeric(x))),
-       ylim=c(0, max(as.numeric(x))))
+       ylim=ylim)
   abline(h=hline, col="gray")
   points(1:length(as.numeric(x)), as.numeric(x))
   axis(side=1, at=1:length(x), labels=names(x), las=3, cex.axis=cex.axis)

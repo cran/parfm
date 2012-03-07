@@ -47,6 +47,8 @@
 select.parfm <- function(formula,
                          cluster=NULL,
                          data,
+                         inip=NULL,
+                         iniFpar=NULL,
                          dist=c("exponential",
                                 "weibull",
                                 "gompertz",
@@ -58,8 +60,8 @@ select.parfm <- function(formula,
                                    "possta"),
                          method="BFGS",
                          maxit=500,
+                         Fparscale=1,
                          correct=0){
-                         
   warn <- getOption("warn")
   options(warn=-1)
   
@@ -78,14 +80,17 @@ select.parfm <- function(formula,
           loglogistic="loglogistic",
             lognormal="lognormal..")[d])
     for (f in frailty) {
-      cat("..ok....")
+      cat("..")
       model <- try(parfm(formula=formula, 
                          cluster=cluster,
                          data=data,
+                         inip=inip,
+                         iniFpar=iniFpar,
                          dist=d,
                          frailty=f,
                          method=method,
                          maxit=maxit,
+                         Fparscale=Fparscale,
                          showtime=FALSE,
                          correct=correct),
                    silent=TRUE)
@@ -93,6 +98,7 @@ select.parfm <- function(formula,
         res$AIC[d, f] <- AIC(model)
         res$BIC[d, f] <- BIC(model)
       }
+      cat("ok....")
     }
   }
   cat("\n")

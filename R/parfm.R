@@ -60,6 +60,8 @@ parfm <- function(formula,
   if (frailty == "none" &&  !is.null(cluster))
     warning(paste("With frailty='none' the cluster variable '",
                   cluster, "' is not used!", sep=""))
+  if (frailty == "none" &&  !is.null(iniFpar))
+    warning("With frailty='none' the argument 'iniFpar' is not used!")
   
   #----- 'Correct' is useless except for frailty="possta" ---------------------#
   if (frailty == "possta") {  #Do not exaggerate when setting 'correct' !
@@ -143,11 +145,12 @@ parfm <- function(formula,
       if (p.init[1] <= 0)
         stop(paste("with that baseline, the 1st parameter has to be > 0"))
       p.init[1] <- log(p.init[1]) 
-    if (dist %in% c("weibull", "gompertz", "lognormal", "loglogistic"))
+    if (dist %in% c("weibull", "gompertz", "lognormal", "loglogistic")) {
       #2nd initial par: log(lambda), log(lambda), log(sigma), or log(kappa)
       if (p.init[2] <= 0)
         stop(paste("with that baseline, the 2nd parameter has to be > 0"))
       p.init[2] <- log(p.init[2]) 
+    }
   } else {
       #if they are not specified, then fit a parametric Cox's model
     require(eha)
@@ -311,8 +314,6 @@ parfm <- function(formula,
       seBeta <- sqrt(var[1:nRpar])
       PVAL <- c(rep(NA, nFpar+nBpar), 
                 2 * pnorm(q=- abs(beta / seBeta)))
-#                 2 * pt(q=- abs(beta / seBeta), 
-#                        df=nrow(data) - length(ESTIMATE)))
     }
       
     if (dist == "exponential") {
@@ -374,7 +375,7 @@ parfm <- function(formula,
       warning(var[1])
       STDERR <- rep(NA, nFpar + nBpar + nRpar)
       PVAL <- rep(NA, nFpar + nBpar + nRpar)
-    } 
+    }
     else {
       if (any(var <= 0))
         warning(paste("negative variances have been replaced by NAs\n",
@@ -449,16 +450,17 @@ parfm <- function(formula,
         }
         PVAL <- c(rep(NA, nFpar+nBpar), 
                   2 * pnorm(q=- abs(beta / seBeta)))
-#                   2 * pt(q=- abs(beta / seBeta), 
-#                          df=nrow(data) - length(ESTIMATE)))
       }
     
       
         #all together
-      STDERR <- c(se.theta=seTheta,
-                  se.nu=seNu,
-                  STDERR,
+      STDERR <- c(STDERR,
                   se.beta=seBeta)
+      if (frailty != "none")
+        STDERR <- c(se.theta=seTheta,
+                    se.nu=seNu,
+                    STDERR)
+        
     }
   }
         
@@ -485,8 +487,10 @@ parfm <- function(formula,
     frailty     = frailty,
     clustname   = cluster,
     correct     = correct))
-  names(attr(resmodel, "cumhaz")) <-
-    names(attr(resmodel, "di")) <- unique(obsdata$cluster)
+  if (frailty != "none") {
+    names(attr(resmodel, "cumhaz")) <-
+      names(attr(resmodel, "di")) <- unique(obsdata$cluster)
+  }
   
   if (showtime){
     cat("\nExecution time:", extime, "second(s) \n")

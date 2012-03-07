@@ -1,7 +1,8 @@
 \name{ci.parfm}
 \alias{ci.parfm}
-\title{Confidence Intervals for Regression Parameter Estimates of Parametric Frailty Models}
-\description{Computes confidence intervals of regression parameter estimates for objects of class \code{\link{parfm}}.}
+\title{Confidence Intervals for Hazard Ratios of Covariates of Parametric Frailty Models}
+\description{Computes confidence intervals for hazard ratios
+  (exp(coef)) for objects of class \code{\link{parfm}}.}
 
 \usage{
   ci.parfm(x, level=.05, digits=3)
