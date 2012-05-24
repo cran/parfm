@@ -8,7 +8,7 @@
   of parametric frailty models with different baseline hazards and different frailty distributions.}
 
 \usage{
-select.parfm(formula, cluster=NULL, data, inip=NULL, iniFpar=NULL,
+select.parfm(formula, cluster=NULL, strata=NULL, data, inip=NULL, iniFpar=NULL,
              dist=c("exponential", "weibull", "gompertz", "loglogistic", "lognormal"),
              frailty=c("none", "gamma", "ingau", "possta"),
              method="BFGS", maxit=500, Fparscale=1, correct=0)
@@ -18,6 +18,7 @@ select.parfm(formula, cluster=NULL, data, inip=NULL, iniFpar=NULL,
   \item{formula}{A \code{\link{formula}} object, with the response on the left of a ~ operator, and the terms on the right.
     The response must be a survival object as returned by the \code{\link{Surv}} function.}
   \item{cluster}{The name of a cluster variable in data.}
+  \item{strata}{The name of a strata variable in data.}
   \item{data}{A \code{\link{data.frame}} in which to interpret the variables named in the formula.}
   \item{inip}{The vector of initial values.
     First components are for the baseline hazard parameters according to

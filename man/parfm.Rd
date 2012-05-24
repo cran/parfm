@@ -7,7 +7,7 @@
 \description{Fits parametric Frailty Models by maximizing the marginal likelihood.}
 
 \usage{
-parfm(formula, cluster=NULL, data, inip=NULL, iniFpar=NULL,
+parfm(formula, cluster=NULL, strata=NULL, data, inip=NULL, iniFpar=NULL,
       dist="weibull", frailty="none", method="BFGS", 
       maxit=500, Fparscale=1, showtime=TRUE, correct=0)
 }
@@ -20,6 +20,7 @@ and the terms on the right.
 function.
     The status indicator 'event' in the Surv object must be 0=alive, 1=dead.}
   \item{cluster}{The name of a cluster variable in data.}
+  \item{strata}{The name of a strata variable in data.}
   \item{data}{A \code{\link{data.frame}} in which to interpret the variables named in
 the formula.}
   \item{inip}{The vector of initial values.
@@ -148,7 +149,7 @@ head(asthma)
 
 parfm(Surv(Begin, End, Status)~Drug, cluster="Patid", 
       data=asthma[asthma$Fevent==0,],
-      dist="lognormal", frailty="ingau")
+      dist="lognormal", frailty="possta")
 #--------------------------
 }
 }

@@ -8,7 +8,7 @@
 #   - object  : the fitted model, object of class 'parfm'                      #
 #                                                                              #
 #   Date: February 02, 2012                                                    #
-#   Last modification on: February 10, 2012                                    #
+#   Last modification on: May 15, 2012                                         #
 ################################################################################
 
 predict.parfm <- function(object,

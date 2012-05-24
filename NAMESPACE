@@ -8,7 +8,8 @@ export(        parfm,
  print.predict.parfm, 
         select.parfm, 
    plot.select.parfm, 
-  print.select.parfm)
+  print.select.parfm,
+                 tau)
   
 S3method(print, parfm)
 S3method(logLik, parfm)

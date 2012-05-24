@@ -32,7 +32,7 @@
 #                                                                              #
 #                                                                              #
 #   Date: December, 19, 2011                                                   #
-#   Last modification on: January, 11, 2012                                    #
+#   Last modification on: March, 20, 2012                                      #
 ################################################################################
 
 print.parfm <- function(x,
@@ -48,15 +48,7 @@ print.parfm <- function(x,
                     ingau  = "Inverse Gaussian")[paste(attributes(x)$frailty)]
     
     # Kendall's Tau
-    if ((attributes(x)$frailty %in% c("gamma", "ingau", "possta") &&
-        (attributes(x)$shared))) {
-      tau <- eval(parse(text=paste("fr.", attributes(x)$frailty, sep="")))
-        if (attributes(x)$frailty %in% c("gamma", "ingau"))
-          tau <- tau(theta=x["theta", "ESTIMATE"], what="tau")
-        else if (attributes(x)$frailty == "possta")
-          tau <- tau(nu=x["nu", "ESTIMATE"], what="tau")
-    }
-      else tau <- NULL
+    tau <- tau(x)
     
     # Which baseline hazard, pretty expression
     baseline <- paste(toupper(substr(attributes(x)$dist, 1, 1)), 

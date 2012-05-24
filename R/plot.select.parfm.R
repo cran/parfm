@@ -5,7 +5,7 @@
 #                                                                              #
 #                                                                              #
 #   Date: December 22, 2011                                                    #
-#                                                                              #
+#   Last modification on: May 24, 2012                                         #
 ################################################################################
 #   Check status: still to check                                               #
 #   Comments:                                                                  #
@@ -46,12 +46,27 @@ plot.select.parfm <- function(x,
   plot(0:2, 0:2, xaxt="n", yaxt="n", bty="n", xlab="", ylab="",
        ty="n")
   
-  legend(c(.3, 1.7), c(.5, 1.5),
-    paste(toupper(substr(rownames(x$AIC),1,1)),
-          substr(rownames(x$AIC),2,100), sep=""),
-    pch=1:nrow(x$AIC), 
-    bg="white", bty="n",
-    ncol=1, cex=1.5, xjust=.5)
+  legend(c(.3, 1.7), c(1, 1.75),
+         c(exponential="exponential", weibull="Weibull", 
+           gompertz="Gompertz", loglogistic="loglogistic", 
+           lognormal="lognormal")[rownames(x$AIC)],
+         pch=1:nrow(x$AIC), 
+         bg="white", bty="n",
+         ncol=1, cex=1.5, xjust=.5)
+  
+  legend(c(0, 2), c(.25, 1), yjust=1,
+         mapply(paste, 
+                c(none="No",
+                  gamma="Ga",
+                  ingau="IG",
+                  possta="PS")[colnames(x$AIC)],
+                c(none="none",
+                  gamma="gamma",
+                  ingau="inverse Gaussian",
+                  possta="positive stable")[colnames(x$AIC)],
+                sep=" = "),
+         bg="white", bty="n",
+         ncol=1, cex=1.5, xjust=.5)
   ### --- end names --- ###
   
   
