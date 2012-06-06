@@ -35,7 +35,7 @@
 #                                                                              #
 #                                                                              #
 #   Date: December 21, 2011                                                    #
-#   Last modification on: May 15, 2012                                         #
+#   Last modification on: June 05, 2012                                        #
 ################################################################################
 
 parfm <- function(formula,
@@ -637,7 +637,15 @@ parfm <- function(formula,
   }
   
   class(resmodel) <- c("parfm", class(resmodel))
+  ### - Checks - ###############################################################
+  Call <- match.call()
+  if (!match("formula", names(Call), nomatch=0))
+    stop("A formula argument is required")
+  
+  Terms <- terms(formula, data = data)
+  ######################################################## - End of Checks - ###
   attributes(resmodel) <- c(attributes(resmodel), list(
+    call        = Call,
     convergence = res$convergence,
     it          = it,
     extime      = extime,
@@ -659,7 +667,10 @@ parfm <- function(formula,
     frailty     = frailty,
     clustname   = cluster,
     stratname   = strata,
-    correct     = correct))
+    correct     = correct,
+    formula     = as.character(Call[match("formula", names(Call), nomatch=0)]),
+    terms       = attr(Terms, "term.labels")
+    ))
   if (frailty != "none") {
      names(attr(resmodel, "cumhaz")) <-
       names(attr(resmodel, "di")) <- unique(obsdata$cluster)
