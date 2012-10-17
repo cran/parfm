@@ -15,7 +15,7 @@
 #   - a header like                                                            #
 #                                                                              #
 #       Frailty distribution: Positive Stable                                  #
-#       Basline hazard distribution: Gompertz                                  #
+#       Baseline hazard distribution: Gompertz                                 #
 #       Loglikelihood: -357.113                                                #
 #                                                                              #
 #   - estimated values in a table like                                         #
@@ -31,8 +31,8 @@
 #                                                                              #
 #                                                                              #
 #                                                                              #
-#   Date: December, 19, 2011                                                   #
-#   Last modification on: March, 20, 2012                                      #
+#   Date: December 19, 2011                                                    #
+#   Last modification on: October 16, 2012                                     #
 ################################################################################
 
 print.parfm <- function(x,
@@ -42,10 +42,11 @@ print.parfm <- function(x,
   if (!is.null(x)){
 
     # Which frailty distribution, pretty expression
-    frailty <- list(none   = "None",
-                    gamma  = "Gamma",
-                    possta = "Positive Stable",
-                    ingau  = "Inverse Gaussian")[paste(attributes(x)$frailty)]
+    frailty <- list(none      = "none",
+                    gamma     = "gamma",
+                    possta    = "positive stable",
+                    ingau     = "inverse Gaussian",
+                    lognormal = "lognormal")[paste(attributes(x)$frailty)]
     
     # Kendall's Tau
     tau <- tau(x)
@@ -81,7 +82,7 @@ print.parfm <- function(x,
     # Output
     cat(paste("\nFrailty distribution:", 
               frailty,
-              "\nBasline hazard distribution:",
+              "\nBaseline hazard distribution:",
               baseline,
               "\nLoglikelihood:", 
               loglikelihood,

@@ -1,0 +1,18 @@
+Changes in Version 2.5 (October 2012)
+
+  o new frailty distrubution available: lognormal
+
+
+Changes in Version 2.01 (June 2012)
+
+  o Added function anova.parfm() to compare models
+
+
+Changes in Version 1.01 (March 2012)
+
+  o Added stratification
+
+
+Changes in Version 0.66-2 (February 2012)
+
+  o Added exaple datasets

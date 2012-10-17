@@ -9,8 +9,9 @@
 
 \usage{
 select.parfm(formula, cluster=NULL, strata=NULL, data, inip=NULL, iniFpar=NULL,
-             dist=c("exponential", "weibull", "gompertz", "loglogistic", "lognormal"),
-             frailty=c("none", "gamma", "ingau", "possta"),
+             dist=c("exponential", "weibull", "gompertz", 
+                    "loglogistic", "lognormal"),
+             frailty=c("none", "gamma", "ingau", "possta", "lognormal"),
              method="BFGS", maxit=500, Fparscale=1, correct=0)
 }
 
@@ -29,9 +30,9 @@ order given
 in 'formula'.}
   \item{iniFpar}{The initial value of the frailty parameter.}
   \item{dist}{The vector of baseline hazards' names.
-    It can include any of \code{weibull}, \code{exponential}, \code{gompertz}, \code{lognormal} or \code{loglogistic}.}
+    It can include any of \code{weibull}, \code{exponential}, \code{gompertz}, \code{loglogistic} or \code{lognormal}.}
   \item{frailty}{The vector of  frailty distributions' names.
-    It can include any of: \code{none}, \code{gamma}, \code{ingau} or \code{possta}.}
+    It can include any of: \code{none}, \code{gamma}, \code{ingau}, \code{possta} or \code{lognormal}.}
   \item{method}{The optimisation method from the function \code{\link{optim}()}.}
   \item{maxit}{Maximum number of iterations (see \code{\link{optim}()}).}
   \item{Fparscale}{the scaling value for the frailty parameter in \code{\link{optim}()}. 
@@ -67,14 +68,15 @@ kidney$sex <- kidney$sex - 1
 
 models <- select.parfm(Surv(time,status) ~ sex + age, 
                        dist=c("exponential", 
-                              "weibull", 
+                              "weibull",
                               "gompertz", 
                               "loglogistic", 
                               "lognormal"),
                        frailty=c("none", 
                                  "gamma", 
                                  "ingau", 
-                                 "possta"),
+                                 "possta", 
+                                 "lognormal"),
                        cluster="id", data=kidney)
 models
 plot(models)

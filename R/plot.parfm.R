@@ -14,7 +14,7 @@
 #   - cex      : cex (see pars())                                              #
 #                                                                              #
 #   Date: February 21, 2012                                                    #
-#   Last modification on: February 29, 2012                                    #
+#   Last modification on: October 17, 2012                                     #
 ################################################################################
 
 plot.parfm <- function(x, 
@@ -46,12 +46,13 @@ plot.parfm <- function(x,
   if (is.null(main)) {
     frailty <- attr(x, "frailty")
     dist <- attr(x, "dist")
-    main <- paste(c(none=" None ", gamma=" Gamma ",
-                    ingau=" Inverse Gaussian ", 
-                    possta=" Positive Stable ")[frailty], 
-                  " frailty model\nwith ", 
-                  toupper(substr(dist, 1, 1)), substr(dist, 2, 100),
-                  " baseline", sep="", collapse="")
+    main <- paste(c(none="Cox ", 
+                    paste(c("Gamma", "Inverse Gaussian", "Positive stable",
+                            "Lognormal"),
+                  "frailty "))[which(c("none", "gamma", "ingau", "possta",
+                                       "lognormal") == frailty)], 
+                  "model\nwith ", 
+                  dist, " baseline", sep="", collapse="")
   }
   
   if (signcol) {

@@ -38,7 +38,7 @@ in 'formula'.}
 \code{loglogistic}.}
   \item{frailty}{
     The Frailty distribution.
-    One of: \code{none}, \code{gamma}, \code{ingau} or \code{possta}.}
+    One of: \code{none}, \code{gamma}, \code{ingau}, \code{possta} or \code{lognormal}.}
   \item{method}{The optimisation method from the function \code{\link{optim}()}.}
   \item{maxit}{Maximum number of iterations (see \code{\link{optim}()}).}
   \item{Fparscale}{the scaling value for the frailty parameter in \code{\link{optim}()}. 
@@ -56,7 +56,7 @@ in 'formula'.}
 
 \strong{Baseline hazards}
 
-The Exponential hazard (\code{dist="exponential"}) is
+The exponential hazard (\code{dist="exponential"}) is
 \deqn{h(t; \lambda) = \lambda}{
   h(t; lambda) = lambda}
 with \eqn{\lambda > 0}{lambda > 0}.
@@ -71,13 +71,13 @@ The Gompertz hazard (\code{dist="gompertz"}) is
   h(t; gamma, lambda) = lambda * exp(gamma * t)}
 with \eqn{\gamma, \lambda > 0}{ gamma, lambda > 0}.
 
-The Lognormal hazard (\code{dist="lognormal"}) is
+The lognormal hazard (\code{dist="lognormal"}) is
 \deqn{h(t; \mu, \sigma) = \frac{\phi \left( \frac{\log ( t ) - \mu}{\sigma}\right)}{\sigma t \left[ 1 - \Phi \left( \frac{\log ( t ) - \mu}{\sigma}\right)\right]}}{
   h(t; mu, sigma) = phi ( (log(t) - mu) / sigma ) / {sigma * t * [1 - Phi( (log(t)- mu) / sigma ) )]}}
 with \eqn{\mu \in   {R}, \sigma > 0}{mu in R, sigma > 0}, and where
 \eqn{\phi}{phi} and \eqn{\Phi}{Phi} are the density and distribution functions of a standard Normal random variable.
 
-The Loglogistic hazard (\code{dist="loglogistic"}) is
+The loglogistic hazard (\code{dist="loglogistic"}) is
 \deqn{h(t; \alpha, \kappa) = \frac{\exp ( \alpha ) \kappa t^{\kappa - 1}}{1 + \exp ( \alpha ) t^{\kappa}}}{
   h(t; alpha, kappa) = [exp(alpha) * kappa * t^(kappa - 1)] / [1 + exp(alpha) * t^(kappa)]}
 with \eqn{\alpha \in   {R}, \kappa > 0}{alpha in R, kappa > 0}.
@@ -86,32 +86,53 @@ with \eqn{\alpha \in   {R}, \kappa > 0}{alpha in R, kappa > 0}.
 
 \strong{Frailty distributions}
 
-The Gamma frailty distribution (\code{frailty="gamma"}) is
+The gamma frailty distribution (\code{frailty="gamma"}) is
 \deqn{f ( u ) = \frac{\theta^{-\frac{1}{\theta}} u^{\frac{1}{\theta} - 1} \exp \left( - u \slash \theta \right)}	{\Gamma ( 1 \slash \theta )}}{
 f(u) = [theta^(-1 / theta) * u^(1 / theta - 1) * exp(-u / theta)] / [Gamma(1 / theta)]}
 with \eqn{\theta > 0}{theta > 0} and where \eqn{\Gamma ( \cdot )}{Gamma(.)} is the gamma function.
 
-The Inverse Gaussian frailty distribution (\code{frailty="ingau"}) is
+The inverse Gaussian frailty distribution (\code{frailty="ingau"}) is
 \deqn{f(u) = \frac1{\sqrt{2 \pi \theta}} u^{- \frac32} \exp \left( - \frac{(u-1)^2}{2 \theta u}  \right)}{ 
   f(u) = 1 / sqrt(2 * pi * theta) * u^(-3 / 2) * exp[- (u - 1)^2 / (2 * theta * u)]}
 with \eqn{\theta > 0}{theta > 0}.
 
-The Positive Stable frailty distribution (\code{frailty="poosta"}) is
+The positive stable frailty distribution (\code{frailty="poosta"}) is
 \deqn{f(u) = f(u) = - \frac1{\pi u} \sum_{k=1}^{\infty} \frac{\Gamma ( k (1 - \nu ) + 1 )}{k!} \left( - u^{ \nu - 1} \right)^{k} \sin ( ( 1 - \nu ) k \pi )}{
 f(u) = - 1 / (pi * u) * sum_(k=1, 2, ..., infiny) [Gamma(k * (1 - nu) + 1) / k! * (-u^(nu - 1))^k * sin((1 - nu) * k * pi)]}
 with \eqn{0 < \nu < 1}{0 < nu < 1}.
+
+The lognormal frailty distribution (\code{frailty="lognormal"}) is
+\deqn{f(u) = \frac1{\sqrt{2 \pi \theta}} u^{-1} \exp \left( - \frac{\log(u)^2}{2 \theta}  \right)}{ 
+  f(u) = 1 / sqrt(2 * pi * theta) * u^(-1) * exp[- (log u)^2 / (2 * theta)]}
+with \eqn{\theta > 0}{theta > 0}.
+As the Laplace tranform of the lognormal frailties does not exist in closed form,
+  the saddlepoint approximation is used (Goutis and Casella, 1999).
+
 }
 
 \value{An object of class \code{parfm}.}
 
 \references{
-%  Munda M., Rotolo F., Legrand C. (2012). parfm: Parametric Frailty Models in R.
-% Submitted.
+  Munda M., Rotolo F., Legrand C. (in press)
+  parfm: Parametric Frailty Models in R.
+  Journal of Statistical Software.
+  [<a href="http://www.uclouvain.be/cps/ucl/doc/stat/documents/DP2012_05_new.pdf"
+    >discussion paper here</a>]
 
-  Duchateau L., Janssen P. (2008) The frailty model. Springer.
+  Duchateau L., Janssen P. (2008) 
+  The frailty model. 
+  Springer.
 
-  Wienke A. (2010) Frailty Models in Survival Analysis. Chapman & Hall/CRC
-biostatistics series. Taylor and Francis.
+  Wienke A. (2010) 
+  Frailty Models in Survival Analysis. 
+  Chapman & Hall/CRC biostatistics series. Taylor and Francis.
+
+  Goutis C., Casella G. (1999)
+  Explaining the Saddlepoint Approximation.
+  The American Statistician 53(3), 216-224.
+  DOI: <a href="dx.doi.org/10.1080/00031305.1999.10474463"
+    target="_blank">10.1080/00031305.1999.10474463</a>
+
 }
 \author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda
 <marco.munda@uclouvain.be>}
@@ -133,6 +154,9 @@ kidney$sex <- kidney$sex - 1
 
 parfm(Surv(time,status) ~ sex + age, cluster="id",
       data=kidney, dist="exponential", frailty="gamma")
+
+parfm(Surv(time,status) ~ sex + age, cluster="id",
+      data=kidney, dist="exponential", frailty="lognormal")
 
 parfm(Surv(time,status) ~ sex + age, cluster="id",
       data=kidney, dist="weibull", frailty="ingau")

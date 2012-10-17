@@ -42,7 +42,7 @@
 #                                                                              #
 #                                                                              #
 #   Date: December 21, 2011                                                    #
-#   Last modification on: April 16, 2012                                       #
+#   Last modification on: October 17, 2012                                     #
 ################################################################################
 
 select.parfm <- function(formula,
@@ -59,7 +59,8 @@ select.parfm <- function(formula,
                          frailty=c("none",
                                    "gamma",
                                    "ingau",
-                                   "possta"),
+                                   "possta",
+                                   "lognormal"),
                          method="BFGS",
                          maxit=500,
                          Fparscale=1,
@@ -69,24 +70,25 @@ select.parfm <- function(formula,
   
   res <- list(AIC=NULL, BIC=NULL)
   res$AIC <- res$BIC <- matrix(NA, length(dist), length(frailty),
-                               dimnames=list(dist, frailty))
+                               dimnames=list(dist, substr(frailty, 1, 6)))
   cat(paste("\n\n### - Parametric frailty models - ###",
             "Progress status:",
             "  'ok' = converged",
             "  'nc' = not converged\n",
-            "             Frailty",
-            "Baseline    ",
+            "                Frailty",
+            "Baseline           ",
             sep="\n"))
-  cat(c(none=" None  ", gamma=" Gamma ", ingau=" InvGau", possta=" PosSta")[frailty]
-    
-  )
+  cat(c(none=" none  ", gamma=" gamma ", ingau=" invGau", 
+        possta=" posSta", lognormal=" lognor")[frailty]
+      
+      )
   for (d in dist) {
     cat("\n")
-    cat(c(exponential="exponential",
-              weibull="weibull....",
-             gompertz="gompertz...",
-          loglogistic="loglogistic",
-            lognormal="lognormal..")[d])
+    cat(c(exponential = "exponential.......",
+          weibull     = "Weibull...........",
+          gompertz    = "Gompertz..........",
+          loglogistic = "loglogistic.......",
+          lognormal   = "lognormal.........")[d])
     for (f in frailty) {
       cat("..")
       model <- try(parfm(formula=formula, 
@@ -104,15 +106,15 @@ select.parfm <- function(formula,
                          correct=correct),
                    silent=TRUE)
       if (!("try-error" %in% class(model))){
-        res$AIC[d, f] <- AIC(model)
-        res$BIC[d, f] <- BIC(model)
+        res$AIC[d, substr(f, 1, 6)] <- AIC(model)
+        res$BIC[d, substr(f, 1, 6)] <- BIC(model)
         cat("ok....")
       } else cat("nc....")
     }
   }
   cat("\n")
   class(res) <- "select.parfm"
-
+  
   options(warn=warn)
   return(res)
 }

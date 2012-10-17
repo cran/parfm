@@ -34,8 +34,8 @@
 #                is the re-adjusted value.                                     #
 #                                                                              #
 #                                                                              #
-#   Date: December 21, 2011                                                    #
-#   Last modification on: June 05, 2012                                        #
+#   Date:                 December 21, 2011                                    #
+#   Last modification on: October 16, 2012                                     #
 ################################################################################
 
 parfm <- function(formula,
@@ -59,11 +59,12 @@ parfm <- function(formula,
   
   #----- Check the baseline hazard and the frailty distribution ---------------#
   if (!(dist %in% 
-    c("exponential", "weibull", "gompertz", "loglogistic", "lognormal"))) {
+    c("exponential", "weibull",
+      "gompertz", "loglogistic", "lognormal"))) {
     stop("invalid baseline hazard")
   }
   if (!(frailty %in% 
-    c("none", "gamma", "ingau", "possta"))) {
+    c("none", "gamma", "ingau", "possta", "lognormal"))) {
     stop("invalid frailty distribution")
   }
   if (frailty == "none" &&  !is.null(cluster)) {
@@ -92,18 +93,27 @@ parfm <- function(formula,
   
   #time
   if (length(formula[[2]]) == 3) {          # --> without left truncation
-    obsdata$time <- eval(parse(text=paste("data$", 
-                                          formula[[2]][[2]], sep="")))
-    obsdata$event <- eval(parse(text=paste("data$", 
-                                           formula[[2]][[3]], sep=""))) 
+    obsdata$time <- eval(#parse(text=paste("data$", 
+      formula[[2]][[2]], 
+      envir=data #sep=""))
+    )
+    obsdata$event <- eval(#parse(text=paste("data$", 
+      formula[[2]][[3]],
+      envir=data #sep=""))
+    )
   } else if (length(formula[[2]]) == 4) {   # --> with left truncation
-    obsdata$trunc <- eval(parse(text=paste("data$", 
-                                           formula[[2]][[2]], sep="")))
-    
-    obsdata$time <- eval(parse(text=paste("data$", 
-                                          formula[[2]][[3]], sep="")))
-    obsdata$event <- eval(parse(text=paste("data$", 
-                                           formula[[2]][[4]], sep="")))
+    obsdata$trunc <- eval(#parse(text=paste("data$", 
+      formula[[2]][[2]],
+      envir=data #sep=""))
+    )    
+    obsdata$time <- eval(#parse(text=paste("data$", 
+      formula[[2]][[3]] ,
+      envir=data #sep=""))
+    )
+    obsdata$event <- eval(#parse(text=paste("data$", 
+      formula[[2]][[4]], 
+      envir=data #sep=""))
+    )
   }
   if (!all(levels(as.factor(obsdata$event)) %in% 0:1)) {
     stop(paste("The status indicator 'event' in the Surv object",
@@ -119,6 +129,8 @@ parfm <- function(formula,
     if (frailty != "none") {
       stop(paste("if you specify a frailty distribution,\n",
                  "then you have to specify the cluster variable as well"))
+    } else {
+      obsdata$cluster <- rep(1, nrow(data))
     }
     #number of clusters
     obsdata$ncl <- 1
@@ -128,11 +140,14 @@ parfm <- function(formula,
     if (! cluster %in% names(data)) {
       stop(paste("object '", cluster, "' not found", sep=""))
     }
-    obsdata$cluster <- eval(parse(text=paste("data$", cluster, sep="")))
+    obsdata$cluster <- eval(#parse(text=paste("data$", 
+      as.name(cluster),
+      envir=data #sep=""))
+    )
     #number of clusters
     obsdata$ncl <- length(levels(as.factor(obsdata$cluster)))
     #number of events in each cluster
-    obsdata$di <- aggregate(obsdata$event, 
+    obsdata$di <- aggregate(obsdata$event,
                             by=list(obsdata$cluster), 
                             FUN=sum)[,, drop=FALSE]
     cnames <- obsdata$di[,1]
@@ -151,7 +166,10 @@ parfm <- function(formula,
     if (! strata %in% names(data)) {
       stop(paste("object '", strata, "' not found", sep=""))
     }
-    obsdata$strata <- eval(parse(text=paste("data$", strata, sep="")))
+    obsdata$strata <- eval(#parse(text=paste("data$", 
+      as.name(strata), 
+      envir=data #sep=""))
+    )
     #number of strata
     obsdata$nstr <- length(levels(as.factor(obsdata$strata)))
     #number of events in each stratum
@@ -186,7 +204,7 @@ parfm <- function(formula,
   #nFpar: number of heterogeneity parameters
   if (frailty == "none") {
     nFpar <- 0
-  } else if (frailty %in% c("gamma", "ingau", "possta")) {
+  } else if (frailty %in% c("gamma", "ingau", "possta", "lognormal")) {
     nFpar <- 1
   }
   obsdata$nFpar <- nFpar
@@ -194,7 +212,8 @@ parfm <- function(formula,
   #nBpar: number of parameters in the baseline hazard
   if (dist == "exponential") {
     nBpar <- 1
-  } else if (dist %in% c("weibull", "gompertz", "lognormal", "loglogistic")) {
+  } else if (dist %in% c("weibull", "gompertz",
+                         "lognormal", "loglogistic")) {
     nBpar <- 2
   }
   #   if (!is.null(strata)) {
@@ -219,31 +238,23 @@ parfm <- function(formula,
     }
     p.init <- inip
     if (dist %in% c("exponential", "weibull", "gompertz")) {
-      #1st initial par: log(lambda), log(rho), or log(gamma)
+      #1st initial par: log(lambda), log(rho), log(rho), or log(gamma)
       if (p.init[1:obsdata$nstr] <= 0) {
         stop(paste("with that baseline, the 1st parameter has to be > 0"))
       }
       p.init[1:obsdata$nstr] <- log(p.init[1:obsdata$nstr]) 
     }
-    if (dist %in% c("weibull", "gompertz", "lognormal", "loglogistic")) {
-      #2nd initial par: log(lambda), log(lambda), log(sigma), or log(kappa)
+    if (dist %in% c("weibull", "gompertz", 
+                    "lognormal", "loglogistic")) {
+      #2nd initial par: log(lambda), log(lambda), log(lambda), 
+      #                 log(sigma), or log(kappa)
       if (p.init[obsdata$nstr + 1:obsdata$nstr] <= 0) {
         stop(paste("with that baseline, the 2nd parameter has to be > 0"))
       }
       p.init[obsdata$nstr + 1:obsdata$nstr] <- 
         log(p.init[obsdata$nstr + 1:obsdata$nstr]) 
     }
-  } else {
-    #if they are not specified, then fit a parametric Cox's model
-    require(eha)
-    
-    shape <- 0  #if zero or negative, the shape parameter is estimated
-    d <- dist
-    if (d == "exponential") {
-      d <- "weibull"
-      shape <- 1  #if positive, the shape parameter is fixed at that value
-    }
-    
+  } else {    
     coxformula <- formula
     if (!is.null(strata)) {
       if (dist!="exponential") {
@@ -255,16 +266,27 @@ parfm <- function(formula,
       }
     }
     
+    #if they are not specified, then fit a parametric Cox's model
+    require(eha)
+    
+    shape <- 0  #if zero or negative, the shape parameter is estimated
+    d <- dist
+    if (d == "exponential") {
+      d <- "weibull"
+      shape <- 1  #if positive, the shape parameter is fixed at that value
+    }
+    
     coxMod <- phreg(formula=coxformula, data=data,
                     dist=d, shape=shape, 
                     center=FALSE, control=list(maxiter=maxit))
+    
     logshape <- as.numeric(coxMod$coef[
       substr(names(coxMod$coef), 5, 9) == "shape"])
     logscale <- as.numeric(coxMod$coef[
       substr(names(coxMod$coef), 5, 9) == "scale"])
     if (!is.null(strata) && dist=="exponential") {
-      logscale <- logscale - c(0,
-                               coxMod$coef[substr(names(coxMod$coef), 1, nchar(strata)) == strata])
+      logscale <- logscale - 
+        c(0, coxMod$coef[substr(names(coxMod$coef), 1, nchar(strata)) == strata])
     }
     
     
@@ -293,7 +315,7 @@ parfm <- function(formula,
   #--- frailty parameters initialisation ---#
   if (frailty == "none") {
     pars <- NULL
-  } else if (frailty %in% c("gamma", "ingau")) {
+  } else if (frailty %in% c("gamma", "ingau", "lognormal")) {
     if (is.null(iniFpar)) {
       iniFpar <- 1
     } else if (iniFpar <= 0) {
@@ -328,7 +350,7 @@ parfm <- function(formula,
                    obs=obsdata, dist=dist, frailty=frailty,
                    correct=correct,
                    hessian=TRUE, 
-                   control=list(maxit=maxit, 
+                   control=list(maxit=maxit,
                                 parscale=c(rep(Fparscale, nFpar),
                                            rep(1, nBpar  * obsdata$nstr + 
                                              nRpar))))})
@@ -354,12 +376,19 @@ parfm <- function(formula,
   #heterogeneity parameter
   if (frailty %in% c("gamma", "ingau")) {
     theta <- exp(res$par[1:nFpar])
+    sigma2 <- NULL
+    nu <- NULL
+  } else if (frailty == "lognormal") {
+    theta <- NULL
+    sigma2 <- exp(res$par[1:nFpar])
     nu <- NULL
   } else if (frailty == "possta") {
-    nu <- exp(-exp(res$par[1:nFpar]))
     theta <- NULL
+    sigma2 <- NULL
+    nu <- exp(-exp(res$par[1:nFpar]))
   } else if (frailty == "none"){
     theta <- NULL
+    sigma2 <- NULL
     nu <- NULL
   }
   
@@ -367,7 +396,7 @@ parfm <- function(formula,
   if (dist == "exponential") {
     lambda <- exp(res$par[nFpar + 1:obsdata$nstr])
     ESTIMATE <- c(lambda=lambda)
-  } else if (dist == "weibull") {
+  } else if (dist %in% c("weibull")) {
     rho <- exp(res$par[nFpar + 1:obsdata$nstr])
     lambda <- exp(res$par[nFpar + obsdata$nstr + 1:obsdata$nstr])
     ESTIMATE <- c(rho=rho, lambda=lambda)
@@ -395,6 +424,7 @@ parfm <- function(formula,
   
   #all together
   ESTIMATE <- c(theta=theta,
+                sigma2=sigma2,
                 nu=nu,
                 ESTIMATE,
                 beta=beta)
@@ -419,7 +449,7 @@ parfm <- function(formula,
                       ses=TRUE)
         })
         STDERR <- c(seLambda=seLambda)
-      } else if (dist == "weibull") {
+      } else if (dist %in% c("weibull")) {
         seRho <- sapply(1:obsdata$nstr, function(x) {
           deltamethod(g=~exp(x1), 
                       mean=logshape[x],
@@ -471,7 +501,7 @@ parfm <- function(formula,
                       ses=TRUE)
         })
         STDERR <- c(seLambda=seLambda)
-      } else if (dist == "weibull") {
+      } else if (dist %in% c("weibull")) {
         seRho <- sapply(1:obsdata$nstr, function(x) {
           deltamethod(g=~exp(x1), 
                       mean=logshape[x],
@@ -552,12 +582,17 @@ parfm <- function(formula,
         seTheta <- sapply(1:nFpar, function(x){
           ifelse(var[x] > 0, sqrt(var[x] * theta[x]^2), NA)
         })
-        seNu <- NULL
+        seSigma2 <- seNu <- NULL
+      } else if (frailty == "lognormal") {
+        seSigma2 <- sapply(1:nFpar, function(x){
+          ifelse(var[x] > 0, sqrt(var[x] * sigma2[x]^2), NA)
+        })
+        seTheta <- seNu <- NULL
       } else if (frailty == "possta") {
         seNu <- sapply(1:nFpar, function(x){
           ifelse(var[x] > 0, sqrt(var[x] * (nu * log(nu))^2), NA)
         })
-        seTheta <- NULL
+        seTheta <- seSigma2 <- NULL
       }
       
       #baseline hazard parameter(s)
@@ -566,7 +601,7 @@ parfm <- function(formula,
           ifelse(var[nFpar + x] > 0, sqrt(var[nFpar + x] * lambda[x]^2), NA)
         })
         STDERR <- c(seLambda=seLambda)
-      } else if (dist == "weibull") {
+      } else if (dist %in% c("weibull")) {
         seRho <- sapply(1:obsdata$nstr, function(x){
           ifelse(var[nFpar + x] > 0, sqrt(var[nFpar + x] * rho[x]^2), NA)
         })
@@ -622,6 +657,7 @@ parfm <- function(formula,
                   se.beta=seBeta)
       if (frailty != "none") {
         STDERR <- c(se.theta=seTheta,
+                    se.sigma2=seSigma2,
                     se.nu=seNu,
                     STDERR)
       }
@@ -670,9 +706,9 @@ parfm <- function(formula,
     correct     = correct,
     formula     = as.character(Call[match("formula", names(Call), nomatch=0)]),
     terms       = attr(Terms, "term.labels")
-    ))
+  ))
   if (frailty != "none") {
-     names(attr(resmodel, "cumhaz")) <-
+    names(attr(resmodel, "cumhaz")) <-
       names(attr(resmodel, "di")) <- unique(obsdata$cluster)
   }
   if (showtime){

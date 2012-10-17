@@ -10,23 +10,13 @@
 #               or "lh", the log-hazard                                        #
 #                                                                              #
 #                                                                              #
-#   Date: December, 19, 2011                                                   #
-#                                                                              #
-################################################################################
-#   Check status: still 0 to be checked                                        #
-#   Comments:                                                                  #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#   On date: December 27, 2011                                                 #
+#   Date:                 December, 19, 2011                                   #
+#   Last modification on: June, 27, 2012                                       #
 ################################################################################
 
 
+################################################################################
+################################################################################
 
 
 ################################################################################
@@ -42,32 +32,44 @@
 #                                                                              #
 #                                                                              #
 #   Date: December, 19, 2011                                                   #
-#                                                                              #
 ################################################################################
-#   Check status: checked                                                      #
-#   Comments:                                                                  #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#   On date: December 27, 2011                                                 #
-################################################################################
-
 
 weibull <- function(pars,
                     t, 
                     what){
-#   if (min(t) < 0)
-#     stop("All times 't' must be non-negative!")
-#   if (pars[1] <=0 || pars[2] <=0)
-#     stop("Both the parameters ('rho' and 'lambda') must be positive!")
- 
   if (what == "H")
     return(pars[2] * t^(pars[1]))
   else if (what == "lh")
     return(log(pars[1]) + log(pars[2]) + ((pars[1] - 1) * log(t)))
 }
 
+
+################################################################################
+#                                                                              #
+#   Inverse Weibull baseline hazard function                                   #
+#                                                                              #
+#   Parameters:                                                                #
+#    [1] rho    > 0                                                            #
+#    [2] lambda > 0                                                            #
+#                                                                              #
+#   Hazard:                                                                    #
+#    h(t) = [\rho / (\lambda t^(\rho + 1))] / [exp{1 /(\lambda t^\rho)} - 1]   #
+#    H(t) = log[exp{1 /(\lambda t^\rho)} - 1]                                  #
+#                                                                              #
+#                                                                              #
+#   Date:                 June, 26, 2012                                       #
+#   Last modification on: June, 27, 2012                                       #
+################################################################################
+
+inweibull <- function(pars,
+                       t, 
+                       what){
+  if (what == "H")
+    return(-log(1 - exp(-1 / (pars[2] * t^(pars[1])))))
+  else if (what == "lh")
+    return(log(pars[1]) - log(pars[2]) - ((pars[1] + 1) * log(t)) -
+      log(exp(1 / (pars[2] * t^(pars[1]))) - 1))
+}
 
 
 ################################################################################
@@ -82,25 +84,11 @@ weibull <- function(pars,
 #                                                                              #
 #                                                                              #
 #   Date: December, 19, 2011                                                   #
-#                                                                              #
-################################################################################
-#   Check status: checked                                                      #
-#   Comments:                                                                  #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#   On date: December 27, 2011                                                 #
 ################################################################################
 
 exponential <- function(pars,
                         t, 
                         what){
-#   if (min(t) < 0)
-#     stop("All times 't' must be non-negative!")
-#   if (pars <=0)
-#     stop("The parameter ('lambda') must be positive!")
-  
   if (what == "H")
     return(pars * t)
   else if (what == "lh") 
@@ -122,27 +110,11 @@ exponential <- function(pars,
 #                                                                              #
 #                                                                              #
 #   Date: December, 19, 2011                                                   #
-#                                                                              #
-################################################################################
-#   Check status: checked                                                      #
-#   Comments:                                                                  #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#   On date: December 27, 2011                                                 #
 ################################################################################
 
 gompertz <- function(pars,
                      t, 
                      what){
-#   if (min(t) < 0)
-#     stop("All times 't' must be non-negative!")
-#   if (pars[1] <=0 || pars[2] <=0)
-#     stop("Both the parameters ('gamma' and 'lambda') must be positive!")
-  
   if (what == "H") 
     return(pars[2] / pars[1] * (exp(pars[1] * t) - 1))
   else if (what == "lh") 
@@ -168,26 +140,11 @@ gompertz <- function(pars,
 #                                                                              #
 #                                                                              #
 #   Date: December, 19, 2011                                                   #
-#                                                                              #
-################################################################################
-#   Check status: checked                                                      #
-#   Comments:                                                                  #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#   On date: December 27, 2011                                                 #
 ################################################################################
 
 lognormal <- function(pars,
                       t, 
                       what){
-#   if (min(t) < 0)
-#     stop("All times 't' must be non-negative!")
-#   if (pars[2] <=0)
-#     stop("The second parameter ('sigma') must be positive!")
-    
   if (what == "H")  #return - log (S)
     return(- log(1 - plnorm(t, meanlog=pars[1], sdlog=pars[2])))
   else if (what == "lh")  #return log(f) - log(S)
@@ -212,29 +169,14 @@ lognormal <- function(pars,
 #                                                                              #
 #                                                                              #
 #   Date: December, 19, 2011                                                   #
-#                                                                              #
-################################################################################
-#   Check status: checked                                                      #
-#   Comments:                                                                  #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#                                                                              #
-#   On date: December 27, 2011                                                 #
 ################################################################################
 
 loglogistic <- function(pars,
                         t, 
                         what){
-#   if (min(t) < 0)
-#     stop("All times 't' must be non-negative!")
-#   if (pars[2] <=0)
-#     stop("The second parameter ('kappa') must be positive!")
-  
   if (what == "H") 
     return(log(1 + exp(pars[1]) * t^(pars[2])))
   else if (what == "lh") 
     return(pars[1] + log(pars[2]) + (pars[2] - 1) * log(t) - 
-           log(1 + exp(pars[1]) * t^pars[2]) )
+      log(1 + exp(pars[1]) * t^pars[2]) )
 }

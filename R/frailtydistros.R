@@ -5,7 +5,8 @@
 #  These are functions with parameters                                         #
 #   - k        : the order of the derivative of the Laplace transform          #
 #   - s        : the argument of the Laplace transform                         #
-#   - theta/nu : the heterogeneity parameter of the frailty distribution       #
+#   - theta/nu/sigma2
+#              : the heterogeneity parameter of the frailty distribution       #
 #   - what     : the quantity to be returned by the function,                  #
 #                either "logLT" for \log[ (-1)^k \mathcal L^(k)(s) ]           # 
 #                with \mathcal L(s) the Laplace transofrm                      #
@@ -20,7 +21,7 @@
 #                is the re-adjusted value.                                     #
 #                                                                              #
 #   Date: December, 19, 2011                                                   #
-#   Last modification on: January 13, 2012                                     #
+#   Last modification on: October 17, 2012                                     #
 ################################################################################
 
 
@@ -113,18 +114,18 @@ fr.ingau <- function(k,
     return(res)
   }
   else if (what == "tau") {
-          integrand <- function(u) {
-          	return(exp(-u) / u)
-        	}
-        	int <- integrate(integrand,
-                           lower=(2/theta), 
-                           upper=Inf)$value
-          tau <- 0.5 - (1 / theta) + (2 * theta^(-2) * exp(2 / theta) * int)
-          if (is.nan(tau) || tau < 0)
-            tau <- paste("The value of 'theta' is too small",
-                         "for computing the Kendall's Tau numerically!")
-        	return(tau)
-        }
+    integrand <- function(u) {
+      return(exp(-u) / u)
+    }
+    int <- integrate(integrand,
+                     lower=(2/theta), 
+                     upper=Inf)$value
+    tau <- 0.5 - (1 / theta) + (2 * theta^(-2) * exp(2 / theta) * int)
+    if (is.nan(tau) || tau < 0)
+      tau <- paste("The value of 'theta' is too small",
+                   "for computing the Kendall's Tau numerically!")
+    return(tau)
+  }
 }
 
 
@@ -182,4 +183,74 @@ fr.possta <- function(k,
   }
   else if (what == "tau")
     return(nu)
+}
+
+
+
+################################################################################
+#                                                                              #
+#   Lognormal frailty distribution                                             #
+#                                                                              #
+#   Density:                                                                   #
+#    f(u) = -\frac1{\sqrt{2\pi \theta}}                                        #
+#           \exp\{ -\frac{u^2}{2\theta}\}                                      #
+#                                                                              #
+#   Arguments of fr.lognormal:                                                 #
+#     [1] k = 0, 1, ...                                                        #
+#     [2] s > 0                                                                #
+#     [3] sigma > 0                                                            #
+#                                                                              #
+#   Date: October 16, 2012                                                     #
+#   Last modification on: October 17, 2012                                     #
+################################################################################
+g <- function(w, k, s, sigma2) {
+  k * w - exp(w) * s - .5 * w^2 / sigma2
+}
+Ng2 <- function(w, k, s, sigma2) {
+  exp(w) * s + 1 / sigma2    
+} 
+
+fr.lognormal <- function(k,
+                         s,
+                         sigma2,
+                         what="logLT"){
+  if (what=="logLT") {
+    # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
+    WARN <- getOption("warn")
+    options(warn=-1)
+    wTilde <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
+                       k=k, s=s, sigma2=sigma2)$maximum
+    options(warn=WARN)
+    
+    # Approximate the integral via Laplacian method
+    res <- -.5 * log(sigma2 * Ng2(w=wTilde, k=k, s=s, sigma2=sigma2)) +
+      g(w=wTilde, k=k, s=s, sigma2=sigma2)
+    
+    return(res)
+  }
+  else if (what == "tau") {    
+#     intTau <- Vectorize(function(x, intTau.sigma2=sigma2) {
+#       # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
+#       WARN <- getOption("warn")
+#       options(warn=-1)
+#       wTilde0 <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
+#                           k=0, 
+#                           s=x, 
+#                           sigma2=intTau.sigma2)$maximum
+#       wTilde2 <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
+#                           k=2, 
+#                           s=x, 
+#                           sigma2=intTau.sigma2)$maximum
+#       options(warn=WARN)
+#       
+#       return(- x * exp(-.5 * log(intTau.sigma2 * (
+#         Ng2(w=wTilde0, k=0, s=x, sigma2=intTau.sigma2) +
+#           Ng2(w=wTilde2, k=2, s=x, sigma2=intTau.sigma2))) +
+#           g(w=wTilde0, k=0, s=x, sigma2=intTau.sigma2) +
+#           g(w=wTilde2, k=2, s=x, sigma2=intTau.sigma2)))
+#     }, "x")
+#     tau <- 4 * integrate(f=intTau, lower=0, upper=Inf, intTau.sigma2=sigma2) - 1
+#     return(tau)
+    return(NULL)
+  }
 }
