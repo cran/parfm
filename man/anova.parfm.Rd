@@ -28,17 +28,28 @@
   The table contains test statistics (and P values)
   comparing the reduction in loglik for each row.
 }
+
 \value{
   An object of class \code{"anova"} inheriting from class \code{"data.frame"}.
 }
+
 \section{Warning}{
   The comparison between two or more models by \code{anova}
    will only be valid if they
   are fitted to the same dataset. This may be a problem if there are
   missing values.}
+  
 \seealso{
   \code{\link{parfm}}, \code{\link{anova}}.
 }
+
+\references{
+  Marco Munda, Federico Rotolo, Catherine Legrand (2012).
+  parfm: Parametric Frailty Models in R.
+  Journal of Statistical Software, 51(11), 1-20. 
+  URL http://www.jstatsoft.org/v51/i11/.
+  }
+  
 \examples{
 fit <- parfm(formula = Surv(time, status) ~ sex + age, cluster = "id",
              data = kidney, dist = "exponential", frailty = "gamma")

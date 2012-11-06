@@ -52,6 +52,12 @@ in 'formula'.}
 \author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda <marco.munda@uclouvain.be>}
 
 %%\note{}
+\references{
+  Marco Munda, Federico Rotolo, Catherine Legrand (2012).
+  parfm: Parametric Frailty Models in R.
+  Journal of Statistical Software, 51(11), 1-20. 
+  URL http://www.jstatsoft.org/v51/i11/.
+}
 
 
 \seealso{

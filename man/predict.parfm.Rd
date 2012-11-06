@@ -19,14 +19,16 @@
 \value{An object of class \code{predict.parfm}.}
 \references{
   Glidden D., Vittinghoff E. (2004). 
-  Modelling Clustered Survival Data From Multicentre Clinical Trials. 
+  Modelling Clustered Survival Data From Multicentre Clinical Trials.   
   Statistics in medicine, 23(3), 369--388.
 
+  Marco Munda, Federico Rotolo, Catherine Legrand (2012).
+  parfm: Parametric Frailty Models in R.
+  Journal of Statistical Software, 51(11), 1-20. 
+  URL http://www.jstatsoft.org/v51/i11/.
+  
 %  McGilchrist C.A., Aisbett C.W. (1991). 
 %  Regression with Frailty in Survival Analysis. Biometrics, pp. 461--466.
-%  
-%  Munda M., Rotolo F., Legrand C. (2012). parfm: Parametric Frailty Models in R.
-% Submitted.
 }
 
 \author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda <marco.munda@uclouvain.be>}

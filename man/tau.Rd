@@ -9,8 +9,10 @@
 %% \details{}
 %% \value{}
 \references{
-%  Munda M., Rotolo F., Legrand C. (2012). parfm: Parametric Frailty Models in R.
-% Submitted.
+  Marco Munda, Federico Rotolo, Catherine Legrand (2012).
+  parfm: Parametric Frailty Models in R.
+  Journal of Statistical Software, 51(11), 1-20. 
+  URL http://www.jstatsoft.org/v51/i11/.
 
   Duchateau L., Janssen P. (2008) The frailty model. Springer.
 

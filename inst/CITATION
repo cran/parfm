@@ -1,0 +1,21 @@
+citHeader("To cite parfm in publications use:")
+
+citEntry(entry = "Article",
+  title        = "{parfm}: Parametric Frailty Models in {R}",
+  author       = personList(as.person("Marco Munda"),
+                   as.person("Federico Rotolo"),
+                   as.person("Catherine Legrand")),
+  journal      = "Journal of Statistical Software",
+  year         = "2012",
+  volume       = "51",
+  number       = "11",
+  pages        = "1--20",
+  url          = "http://www.jstatsoft.org/v51/i11/",
+
+  textVersion  =
+  paste("Marco Munda, Federico Rotolo, Catherine Legrand (2012).",
+        "parfm: Parametric Frailty Models in R.",
+        "Journal of Statistical Software, 51(11), 1-20.",
+        "URL http://www.jstatsoft.org/v51/i11/.")
+)
+

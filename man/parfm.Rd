@@ -113,11 +113,10 @@ As the Laplace tranform of the lognormal frailties does not exist in closed form
 \value{An object of class \code{parfm}.}
 
 \references{
-  Munda M., Rotolo F., Legrand C. (in press)
+  Marco Munda, Federico Rotolo, Catherine Legrand (2012).
   parfm: Parametric Frailty Models in R.
-  Journal of Statistical Software.
-  [<a href="http://www.uclouvain.be/cps/ucl/doc/stat/documents/DP2012_05_new.pdf"
-    >discussion paper here</a>]
+  Journal of Statistical Software, 51(11), 1-20. 
+  URL http://www.jstatsoft.org/v51/i11/.
 
   Duchateau L., Janssen P. (2008) 
   The frailty model. 

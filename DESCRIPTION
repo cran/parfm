@@ -1,8 +1,8 @@
 Package: parfm
 Type: Package
 Title: Parametric Frailty Models
-Version: 2.5.1
-Date: 2012-10-17
+Version: 2.5.2
+Date: 2012-11-06
 Author: Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda
         <marco.munda@uclouvain.be>
 Maintainer: Federico Rotolo <federico.rotolo@stat.unipd.it>
@@ -14,6 +14,6 @@ Description: Parametric Frailty Models, fitted by maximum marginal
 License: GPL-2
 LazyLoad: yes
 Depends: survival, eha, msm, R (>= 2.10)
-Packaged: 2012-10-28 20:46:09 UTC; federico
+Packaged: 2012-11-06 13:06:49 UTC; federico
 Repository: CRAN
-Date/Publication: 2012-10-29 09:06:13
+Date/Publication: 2012-11-06 16:14:39
