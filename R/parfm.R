@@ -332,6 +332,7 @@ parfm <- function(formula,
   }
   
   pars <- c(pars, p.init)
+  res <- NULL
   
   #----- Minimise Mloglikelihood() --------------------------------------------#
   if ((frailty == "none") && is.null(inip)) {

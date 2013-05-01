@@ -154,6 +154,7 @@ kidney$sex <- kidney$sex - 1
 parfm(Surv(time,status) ~ sex + age, cluster="id",
       data=kidney, dist="exponential", frailty="gamma")
 
+\donttest{
 parfm(Surv(time,status) ~ sex + age, cluster="id",
       data=kidney, dist="exponential", frailty="lognormal")
 
@@ -164,7 +165,6 @@ parfm(Surv(time,status) ~ sex + age, cluster="id",
       data=kidney, dist="gompertz", frailty="possta", method="Nelder-Mead")
 #--------------------------
 
-\donttest{
 #------Asthma dataset------
 data(asthma)
 head(asthma)

@@ -21,7 +21,7 @@
 #                is the re-adjusted value.                                     #
 #                                                                              #
 #   Date: December, 19, 2011                                                   #
-#   Last modification on: October 17, 2012                                     #
+#   Last modification on: May 1, 2013                                          #
 ################################################################################
 
 
@@ -201,10 +201,14 @@ fr.possta <- function(k,
 #     [3] sigma > 0                                                            #
 #                                                                              #
 #   Date: October 16, 2012                                                     #
-#   Last modification on: October 17, 2012                                     #
+#   Last modification on: May 1, 2013                                          #
 ################################################################################
+
 g <- function(w, k, s, sigma2) {
   k * w - exp(w) * s - .5 * w^2 / sigma2
+}
+Ng <- function(w, k, s, sigma2) {
+  -g(w=w, k=k, s=s, sigma2=sigma2)
 }
 Ng2 <- function(w, k, s, sigma2) {
   exp(w) * s + 1 / sigma2    
@@ -218,8 +222,10 @@ fr.lognormal <- function(k,
     # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
     WARN <- getOption("warn")
     options(warn=-1)
-    wTilde <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
-                       k=k, s=s, sigma2=sigma2)$maximum
+#     wTilde <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
+#                        k=k, s=s, sigma2=sigma2)$maximum
+    wTilde <- nlm(f=Ng, p=0, hessian=FALSE, iterlim=500, 
+                  k=k, s=s, sigma2=sigma2)$estimate
     options(warn=WARN)
     
     # Approximate the integral via Laplacian method
@@ -229,28 +235,28 @@ fr.lognormal <- function(k,
     return(res)
   }
   else if (what == "tau") {    
-#     intTau <- Vectorize(function(x, intTau.sigma2=sigma2) {
-#       # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
-#       WARN <- getOption("warn")
-#       options(warn=-1)
-#       wTilde0 <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
-#                           k=0, 
-#                           s=x, 
-#                           sigma2=intTau.sigma2)$maximum
-#       wTilde2 <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
-#                           k=2, 
-#                           s=x, 
-#                           sigma2=intTau.sigma2)$maximum
-#       options(warn=WARN)
-#       
-#       return(- x * exp(-.5 * log(intTau.sigma2 * (
-#         Ng2(w=wTilde0, k=0, s=x, sigma2=intTau.sigma2) +
-#           Ng2(w=wTilde2, k=2, s=x, sigma2=intTau.sigma2))) +
-#           g(w=wTilde0, k=0, s=x, sigma2=intTau.sigma2) +
-#           g(w=wTilde2, k=2, s=x, sigma2=intTau.sigma2)))
-#     }, "x")
-#     tau <- 4 * integrate(f=intTau, lower=0, upper=Inf, intTau.sigma2=sigma2) - 1
-#     return(tau)
+    #     intTau <- Vectorize(function(x, intTau.sigma2=sigma2) {
+    #       # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
+    #       WARN <- getOption("warn")
+    #       options(warn=-1)
+    #       wTilde0 <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
+    #                           k=0, 
+    #                           s=x, 
+    #                           sigma2=intTau.sigma2)$maximum
+    #       wTilde2 <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
+    #                           k=2, 
+    #                           s=x, 
+    #                           sigma2=intTau.sigma2)$maximum
+    #       options(warn=WARN)
+    #       
+    #       return(- x * exp(-.5 * log(intTau.sigma2 * (
+    #         Ng2(w=wTilde0, k=0, s=x, sigma2=intTau.sigma2) +
+    #           Ng2(w=wTilde2, k=2, s=x, sigma2=intTau.sigma2))) +
+    #           g(w=wTilde0, k=0, s=x, sigma2=intTau.sigma2) +
+    #           g(w=wTilde2, k=2, s=x, sigma2=intTau.sigma2)))
+    #     }, "x")
+    #     tau <- 4 * integrate(f=intTau, lower=0, upper=Inf, intTau.sigma2=sigma2) - 1
+    #     return(tau)
     return(NULL)
   }
 }

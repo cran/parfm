@@ -78,10 +78,9 @@ legend("topleft", lty=1:2, legend=c("US", "RX"))
 #of being healed                                                               #
 #Duchateau and Janssen (2008, page 160)                                        #
 ################################################################################
-}
+
 WeiIG <- parfm(Surv(TimeMonths, Status)~Method, cluster="Dogid", data=diagnosis,
                dist="weibull", frailty="ingau")
-\donttest{
 WeiIG
 
 curve(WeiIG["lambda", 1] * WeiIG["rho", 1] * x^(WeiIG["rho", 1] - 1),
