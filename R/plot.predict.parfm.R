@@ -22,7 +22,7 @@ plot.predict.parfm <- function(x, sort="i",
                                hline=1,
                                ylim=NULL,
                                ...){
-  library(graphics)
+  # library('graphics')
   xlab = attr(x, "clustname")
   if (is.null(main)) {
     frailty <- attr(x, "frailty")

@@ -28,7 +28,7 @@
 #                                                                              #
 #                                                                              #
 #   Date: December 19, 2011                                                    #
-#   Last modification on: October 16, 2012                                     #
+#   Last modification on: Jube 20, 2014                                        #
 ################################################################################
 
 Mloglikelihood <- function(p,
@@ -112,7 +112,8 @@ Mloglikelihood <- function(p,
                         function(x) {
                           sum(dist(as.numeric(x[-1]), 
                                    obs$time[obs$strata==x[1]], what="H") * 
-                                     exp(as.matrix(obs$x[obs$strata==x[1], -1]) %*% 
+                                     exp(as.matrix(obs$x[obs$strata==x[1], -1, 
+                                                         drop=FALSE]) %*% 
                                      as.matrix(beta)))
                         }))
     
@@ -123,7 +124,8 @@ Mloglikelihood <- function(p,
               function(x) {
                 sum(dist(as.numeric(x[-1]), 
                          obs$trunc[obs$strata==x[1]], what="H") * 
-                           exp(as.matrix(obs$x[obs$strata==x[1], -1]) %*% 
+                           exp(as.matrix(obs$x[obs$strata==x[1], -1, 
+                                               drop=FALSE]) %*% 
                            as.matrix(beta)))
               }))
     }

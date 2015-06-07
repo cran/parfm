@@ -134,7 +134,7 @@ As the Laplace tranform of the lognormal frailties does not exist in closed form
 
 }
 \author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda
-<marco.munda@uclouvain.be>}
+<marco.munda@arlenda.com>}
 %%\note{}
 
 \seealso{
@@ -172,7 +172,7 @@ head(asthma)
 
 parfm(Surv(Begin, End, Status)~Drug, cluster="Patid", 
       data=asthma[asthma$Fevent==0,],
-      dist="lognormal", frailty="possta")
+      dist="weibull", frailty="gamma")
 #--------------------------
 }
 }

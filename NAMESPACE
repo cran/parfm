@@ -11,7 +11,9 @@ export(        parfm,
    plot.select.parfm, 
   print.select.parfm,
                  tau)
-  
+
+S3method(anova, parfm)
+S3method(plot, parfm)
 S3method(print, parfm)
 S3method(logLik, parfm)
 S3method(predict, parfm)
@@ -20,4 +22,4 @@ S3method(print, predict.parfm)
 S3method(plot, select.parfm)
 S3method(print, select.parfm)
 
-import(survival, msm, eha)
+import(msm, eha, graphics, survival)
