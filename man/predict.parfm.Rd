@@ -31,7 +31,7 @@
 %  Regression with Frailty in Survival Analysis. Biometrics, pp. 461--466.
 }
 
-\author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda <marco.munda@uclouvain.be>}
+\author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda <marco.munda@arlenda.be>}
 
 %%\note{}
 

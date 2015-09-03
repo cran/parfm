@@ -26,7 +26,7 @@
   URL http://www.jstatsoft.org/v51/i11/.
 }
 
-\author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda <marco.munda@uclouvain.be>}
+\author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda <marco.munda@arlenda.be>}
 
 %%\note{}
 

@@ -47,9 +47,8 @@ in 'formula'.}
 
 %%\details{}
 \value{An object of class \code{select.parfm}.}
-%%\references{Munda M, Rotolo F, Legrand C (2012). parfm: Parametric Frailty Models in R. Submitted}
 
-\author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda <marco.munda@uclouvain.be>}
+\author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda <marco.munda@arlenda.be>}
 
 %%\note{}
 \references{

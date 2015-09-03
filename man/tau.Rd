@@ -20,7 +20,7 @@
 biostatistics series. Taylor and Francis.
 }
 \author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda
-<marco.munda@uclouvain.be>}
+<marco.munda@arlenda.be>}
 %% \note{}
 
 \seealso{

@@ -1,3 +1,4 @@
+
 ################################################################################
 #  Frailty distributions                                                       #
 ################################################################################
@@ -201,62 +202,62 @@ fr.possta <- function(k,
 #     [3] sigma > 0                                                            #
 #                                                                              #
 #   Date: October 16, 2012                                                     #
-#   Last modification on: May 1, 2013                                          #
+#   Last modification on: September 2, 2015                                    #
 ################################################################################
-
 g <- function(w, k, s, sigma2) {
-  k * w - exp(w) * s - .5 * w^2 / sigma2
+    - k * w + exp(w) * s + .5 * w^2 / sigma2
 }
-Ng <- function(w, k, s, sigma2) {
-  -g(w=w, k=k, s=s, sigma2=sigma2)
+
+g1 <- function(w, k, s, sigma2) {
+    - k + exp(w) * s + w / sigma2
 }
-Ng2 <- function(w, k, s, sigma2) {
-  exp(w) * s + 1 / sigma2    
+
+g2 <- function(w, k, s, sigma2) {
+    exp(w) * s + 1 / sigma2    
 } 
+
+Lapl <- Vectorize(function(s, k, sigma2) {
+    # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
+    WARN <- getOption("warn")
+    options(warn=-1)
+    wTilde <- optimize(f=g, c(-1e10, 1e10), maximum=FALSE,
+                       k=k, s=s, sigma2=sigma2)$minimum
+    options(warn=WARN)
+    
+    # Approximate the integral via Laplacian method
+    res <- (-1)^k * 
+        exp(-g(w=wTilde, k=k, s=s, sigma2=sigma2)) /
+        sqrt(sigma2 * g2(w=wTilde, k=k, s=s, sigma2=sigma2))
+    return(res)
+}, 's')
 
 fr.lognormal <- function(k,
                          s,
                          sigma2,
                          what="logLT"){
-  if (what=="logLT") {
-    # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
-    WARN <- getOption("warn")
-    options(warn=-1)
-#     wTilde <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
-#                        k=k, s=s, sigma2=sigma2)$maximum
-    wTilde <- nlm(f=Ng, p=0, hessian=FALSE, iterlim=500, 
-                  k=k, s=s, sigma2=sigma2)$estimate
-    options(warn=WARN)
-    
-    # Approximate the integral via Laplacian method
-    res <- -.5 * log(sigma2 * Ng2(w=wTilde, k=k, s=s, sigma2=sigma2)) +
-      g(w=wTilde, k=k, s=s, sigma2=sigma2)
-    
-    return(res)
-  }
-  else if (what == "tau") {    
-    #     intTau <- Vectorize(function(x, intTau.sigma2=sigma2) {
-    #       # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
-    #       WARN <- getOption("warn")
-    #       options(warn=-1)
-    #       wTilde0 <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
-    #                           k=0, 
-    #                           s=x, 
-    #                           sigma2=intTau.sigma2)$maximum
-    #       wTilde2 <- optimize(f=g, c(-1e10, 1e10), maximum=TRUE,
-    #                           k=2, 
-    #                           s=x, 
-    #                           sigma2=intTau.sigma2)$maximum
-    #       options(warn=WARN)
-    #       
-    #       return(- x * exp(-.5 * log(intTau.sigma2 * (
-    #         Ng2(w=wTilde0, k=0, s=x, sigma2=intTau.sigma2) +
-    #           Ng2(w=wTilde2, k=2, s=x, sigma2=intTau.sigma2))) +
-    #           g(w=wTilde0, k=0, s=x, sigma2=intTau.sigma2) +
-    #           g(w=wTilde2, k=2, s=x, sigma2=intTau.sigma2)))
-    #     }, "x")
-    #     tau <- 4 * integrate(f=intTau, lower=0, upper=Inf, intTau.sigma2=sigma2) - 1
-    #     return(tau)
-    return(NULL)
-  }
+    if (what=="logLT") {
+        # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
+        WARN <- getOption("warn")
+        options(warn=-1)
+        wTilde <- optimize(f=g, c(-1e10, 1e10), maximum=FALSE,
+                           k=k, s=s, sigma2=sigma2)$minimum
+        options(warn=WARN)
+        
+        # Approximate the integral via Laplacian method
+        res <- (-1)^k * 
+            exp(-g(w=wTilde, k=k, s=s, sigma2=sigma2)) /
+            sqrt(sigma2 * g2(w=wTilde, k=k, s=s, sigma2=sigma2))
+        return(res)
+    }
+    else if (what == "tau") {
+        intTau <- Vectorize(function(x, intTau.sigma2=sigma2) {
+            res <- x * 
+                Lapl(s=x, k = 0, sigma2 = intTau.sigma2) *
+                Lapl(s=x, k = 2, sigma2 = intTau.sigma2)
+            return(res)
+        }, "x")
+        
+        tauRes <- 4 * integrate(f=intTau, lower=0, upper=Inf, intTau.sigma2=sigma2)$value - 1
+        return(tauRes)
+    }
 }
