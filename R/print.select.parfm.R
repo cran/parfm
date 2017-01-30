@@ -11,21 +11,37 @@
 #                                                                              #
 #                                                                              #
 #   Date:                 January, 10, 2012                                    #
-#   Last modification on: June 27, 2012                                        #
+#   Last modification on: December  2, 2016                                    #
 ################################################################################
 
 print.select.parfm <- function(x,
                                digits=3,
                                na.print="----",
                                ...) {
-  if (missing(digits))
-    digits <- 3
-  
-  if (!is.null(x)){
-    cat("\nAIC:\n")  
-    print(round(x$AIC, digits), na.print=na.print)
+    if (missing(digits))
+        digits <- 3
     
-    cat("\n\nBIC:\n")  
-    print(round(x$BIC, digits), na.print=na.print)
-  } 
+    if (!is.null(x)) {
+        x <- lapply(x, function(c) {
+            C <- cbind(paste(' ', rownames(c)), 
+                         format(c, digits = digits, justify = "right", 
+                                width = max(nchar(colnames(c)))))
+            rownames(C) <- rep("", nrow(C))
+            C[grepl('NA', C)] <- na.print
+            C[, -1] <- format(C[, -1], nsmall = max(nchar(C[, -1])),
+                                justify = "right")
+            colnames(C) <- format(colnames(C), justify = 'right')
+            return(C)
+        })
+
+        # AIC
+        colnames(x[[1]])[1] <- 'AIC:'
+        print(x[[1]], quote = FALSE)
+        
+        cat('\n')
+        
+        # BIC
+        colnames(x[[2]])[1] <- 'BIC:'
+        print(x[[2]], quote = FALSE)
+    } 
 }

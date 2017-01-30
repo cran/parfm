@@ -26,7 +26,9 @@
   URL http://www.jstatsoft.org/v51/i11/.
 }
 
-\author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda <marco.munda@arlenda.be>}
+\author{
+  \packageAuthor{parfm}
+}
 
 %%\note{}
 
@@ -39,7 +41,6 @@
 \examples{
   library(parfm)
 
-  #------Kidney dataset------
   data("kidney")
   kidney$sex <- kidney$sex - 1
 
@@ -47,7 +48,6 @@
                data=kidney, dist="exponential", frailty="gamma")
 
   ci.parfm(pfm)
-  #--------------------------
 }
 
 %%\keyword{}

@@ -43,6 +43,10 @@
   \code{\link{parfm}}, \code{\link{anova}}.
 }
 
+\author{
+  \packageAuthor{parfm}
+}
+
 \references{
   Marco Munda, Federico Rotolo, Catherine Legrand (2012).
   parfm: Parametric Frailty Models in R.

@@ -1,0 +1,29 @@
+For ease of notation, let $H_{i\cdot,c}(\bm y_i)$ denote 
+  $\sum_{j=1}^{n_i} H_0 ( y_{ij} ) \exp ( \bm x^\top_{ij} \bm\beta )$.
+
+For any frailty distribution $f(u_i; \xi)$ and for any $\alpha \in \mathbb N$, we have
+  
+\begin{align*}
+\E \left( U^\alpha \mid \bm z_i, \bm \tau_i ; \bm\psi, \bm\beta, \xi \right) 
+  &= \int_0^\infty u_i^\alpha f \left( u_i \mid \bm z_i, \bm \tau_i ; \bm\psi, \bm\beta, \xi \right) \mathrm d u_i \\
+  &=  \int_0^\infty u_i^\alpha \frac{L_{\mathrm{cond}} \left( \bm\psi, \bm\beta \mid \bm \tau_i, u_i; \bm z_i \right) f \left( u_i \mid \bm \tau_i ; \xi \right) }
+      {L_{\mathrm{marg}} \left( \bm\psi, \bm\beta, \xi \mid \bm \tau_i ; \bm z_i \right)} \mathrm d u_i,
+\end{align*}
+
+with
+
+\begin{eqnarray*}
+L_{\mathrm{cond}} \left( \bm\psi, \bm\beta \mid \bm \tau_i, u_i; \bm z_i \right) & = & \left[ \prod_{j=1}^{n_i} \left( h_0 ( y_{ij} ) u_i \exp ( \bm x^\top_{ij} \bm\beta ) \right)^{\delta_{ij}} \right]  \exp \left( - u_i  H_{i\cdot,c}(\bm y_i) \right) \exp \left( u_i  H_{i\cdot,c}(\bm \tau_i)  \right), \\
+f \left( u_i \mid \bm \tau_i ; \xi \right) & = & \frac{\exp \left( -u_i  H_{i\cdot,c}(\bm \tau_i)  \right) f(u_{i}; \xi)}{\mathcal{L} \left(H_{i\cdot,c}(\bm \tau_i)\right)}\ccom \\
+L_{\mathrm{marg}} \left( \bm\psi, \bm\beta, \xi \mid \tau_i ; \bm z_i \right) & = & \int_{0}^{\infty} L_{\mathrm{cond}} \left( \bm\psi, \bm\beta \mid \bm \tau_i, u_i; \bm z_i \right) f \left( u_i \mid \bm \tau_i ; \xi \right) \mathrm du_{i}.
+\end{eqnarray*}
+
+Thus,
+
+\begin{align*}
+\E \left( U^\alpha \mid \bm z_i, \bm \tau_i ; \bm\psi, \bm\beta, \xi \right)
+ &= \frac{\displaystyle \int_0^\infty u_i^{d_i + \alpha} \exp \left( - u_i  H_{i\cdot,c}(\bm y_i) \right) f(u_i ; \xi) \mathrm d u_i}
+        {\displaystyle \int_0^\infty u_i^{d_i} \exp \left( - u_i  H_{i\cdot,c}(\bm y_i) \right) f(u_i ; \xi) \mathrm d u_i} \\
+   &= \frac{\displaystyle E \left[ U^{d_i + \alpha} \exp \left( -U  H_{i\cdot,c}(\bm y_i) \right) \right]}{\displaystyle E \left[ U^{d_i} \exp \left( -U  H_{i\cdot,c}(\bm y_i) \right) \right]}\cdot
+\end{align*}
+\qed

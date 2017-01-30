@@ -1,0 +1,103 @@
+% % % General intro
+% % Survival
+Survival data, or time-to-event data, measure the time 
+  elapsed from a given origin to the occurrence of an event of interest.
+The observation of survival data is very common in the medical fields
+  where, for instance, the clinician is interested in the time to relapse of a pathology after the therapy.
+However, the researcher cannot always observe the event due to censoring. 
+Right-censoring occurs when the time of interest cannot be observed but only a lower bound is available. 
+Particular techniques are therefore required as described by a number of textbooks, e.g., \cite{KleinMoeschberger2003}.
+
+Most commonly, survival data 
+are handled by means of the proportional hazards regression model popularised by \cite{Cox72}.
+But correct inference based on those proportional hazards models needs independent and identically distributed samples.
+Nonetheless, subjects may be exposed to different risk levels, even after controlling for known risk factors;
+	this is because some relevant covariates are often unavailable to the researcher or even unknown (univariate case).
+Also, the study population may be divided into clusters so that subjects from the same cluster behave more cohesively than subjects from different clusters (multivariate case).
+Lots of examples of clustered survival data arise from large-scale clinical trials
+  in which patients are recruited at several hospital centres \citep{DuchateauEtal02, GliddenVittinghoff04}.
+  Another classical example
+  is the analysis of lifetimes of matched human organs such as eyes or kidneys.
+
+
+% % Frailty models 
+The frailty model, introduced in the biostatistical literature by 
+  \cite{VaupelEtal79}, and discussed in details
+  by \cite{Hougaard00}, \cite{DuchateauJanssen08}, and by \cite{Wienke10}, 
+  accounts for this heterogeneity in baseline.
+It is an extension of the proportional hazards model in which the hazard function
+    depends upon an unobservable random quantity, the so-called frailty, that acts multiplicatively on it.
+  
+The gamma frailty model assumes a gamma distribution for the frailties.
+Arguably, this is the most popular frailty model due to its mathematical tractability.
+The lognormal frailty model is also well-liked for its strong link with generalised linear mixed models.
+Other frailty distributions include the positive stable and the inverse Gaussian.
+All of these are reviewed by \citeauthor{DuchateauJanssen08} (\citeyear{DuchateauJanssen08}, Chapter~4).
+
+Of particular interest in the multivariate case is the association between related event times.
+Indeed, different dependence structures result from different frailty distributions \citep{Hougaard95}.
+In particular, positive stable frailties typically generate very strong dependence initially while, at equal global dependence,
+gamma frailties lead to stronger dependence at late times, and inverse Gaussian frailties 
+  are in between the two.  
+% 	induce stronger dependence in the central area.
+These three distributions therefore cover a wide range of association structures in the data.
+
+% % Parametric vs. Semiparametric
+Estimation of the frailty model can be parametric or semi-parametric. 
+In the former case, a parametric density is assumed for the event times, 
+  resulting in a parametric baseline hazard function.
+Estimation is then conducted by maximising the marginal log-likelihood (see Section~\ref{sec:model}).
+In the second case, the baseline hazard is left unspecified and more complex techniques are available to
+  approach that situation \citep{AbrahantesEtal07}.
+Even though semi-parametric estimation offers more flexibility,
+  the parametric estimation will be more powerful if the form of the baseline hazard is somehow known in advance.
+Further, the estimation technique is much simpler.
+
+
+% % Existing software on parametric frailty models
+Slowly but surely, a variety of estimation procedures becomes available in standard statistical software.
+In \proglang{R} \citep{R}, the \code{coxph()} function from the \pkg{survival}~package \citep{R:survival}
+  handles the semi-parametric model with gamma and lognormal frailties.
+Important options supported by \code{coxph()} and its output are described in details by 
+  \citeauthor{TherneauGrambsch00} (\citeyear{TherneauGrambsch00}, Chapter~9).
+Recently, the \pkg{frailtypack}~package \citep{R:frailtypack} by \cite{RondeauGonzales05}
+  and \cite{RondeauEtal12} has been updated and it stands now for gamma frailty models
+  with a semi-parametric estimation but also with a parametric approach using the Weibull baseline hazard.
+Other \proglang{R} packages include \pkg{coxme} \citep{R:coxme} and \pkg{phmm} \citep{R:phmm}. 
+These two perform semi-parametric estimation in the lognormal frailty model.
+\proglang{SAS} \citep{SAS} also deals with the lognormal distribution. 
+On the one hand, \code{proc phreg} can now fit the semi-parametric lognormal frailty model.
+On the other hand, \code{proc nlmixed} deals with the parametric version by using Gaussian quadrature to approach the marginal likelihood;
+  see, e.g., \citeauthor{DuchateauJanssen08} (\citeyear{DuchateauJanssen08}, Example~4.16).
+In the parametric setting, \proglang{STATA} \citep{STATA} provides some flexibility.
+The \code{streg}~command \citep{Gutierrez02} is able to perform maximum likelihood estimation 
+  with various choices of baselines:
+  exponential, Weibull, Gompertz, lognormal, loglogistic, and generalised gamma.
+Take notice, however, that \proglang{STATA} fits the accelerated failure time model.
+Still, with exponential or Weibull baselines, both the proportional hazards and the accelerated failure time
+  representations are allowed.   
+As for the frailty distribution, the gamma and the inverse Gaussian are the only two that are supported.
+% See \cite{Gutierrez02} for an illustration of \code{streg}.
+On a side note, Bayesian analyses can be conducted in \proglang{WinBUGS} \citep{Winbugs};
+  see, e.g., \citeauthor{DuchateauJanssen08} (\citeyear{DuchateauJanssen08}, Example~6.4).
+For a deeper overview of who supports what, and for a comparison of some of the aforementioned functions,
+  see \cite{WienkeHirsch11}.
+
+
+% % Objective
+Hereinbelow, we illustrate \pkg{parfm} \citep{R:parfm}, a new \proglang{R} package that fits 
+    the gamma, the positive stable, the inverse Gaussian, and lognormal
+    proportional hazards frailty models 
+    with either exponential, Weibull, Gompertz, lognormal, 
+    or loglogistic baseline.
+The main advantage of \pkg{parfm} therefore relies on the large choice 
+  of frailty distributions and parametric baseline hazards it supports.
+Parameter estimation is done by maximising the marginal log-likelihood.
+% % Outline
+
+The model and the marginal log-likelihood are shown in Section~\ref{sec:model}.
+There, we also outline the estimation method,
+  while Sections~\ref{sec:model:gamma}--\ref{sec:model:LN} provide details 
+  for the three frailty distributions supported by \pkg{parfm}.
+In Section~\ref{sec:rexample}, we apply \pkg{parfm} to a real dataset in order to illustrate its use and its output.
+Section~\ref{sec:concl} concludes with remarks.

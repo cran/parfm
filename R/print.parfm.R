@@ -30,68 +30,73 @@
 #       Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1          #
 #                                                                              #
 #                                                                              #
-#                                                                              #
 #   Date: December 19, 2011                                                    #
-#   Last modification on: October 16, 2012                                     #
+#   Last modification: January 23, 2017                                        #
 ################################################################################
 
 print.parfm <- function(x,
-                        digits=3,
-                        na.print="",
+                        digits = 3,
+                        na.print = "",
+                        silent = FALSE,
                         ...) {
-  if (!is.null(x)){
-
-    # Which frailty distribution, pretty expression
-    frailty <- list(none      = "none",
-                    gamma     = "gamma",
-                    possta    = "positive stable",
-                    ingau     = "inverse Gaussian",
-                    lognormal = "lognormal")[paste(attributes(x)$frailty)]
-    
-    # Kendall's Tau
-    tau <- tau(x)
-    
-    # Which baseline hazard, pretty expression
-    baseline <- paste(toupper(substr(attributes(x)$dist, 1, 1)), 
-                     substr(attributes(x)$dist, 2, 100), 
-                     sep="")
-
-    # Loglikelihood value
-    loglikelihood <-round(attributes(x)$loglik, digits)
-    
-    x <- as.data.frame(x)
-
-    # Significance of regression parameters with symbols
-    if ("p-val" %in% colnames(x)) {
-      signif <-unlist(lapply(x$"p-val", function(x) { if (!is.na(x)){
-        if (x<.001) 4  else
-          if (x<.01) 3  else
-            if (x<.05) 2 else
-              if (x<.1) 1 else 0  } else 0 }
-      ))
-      signif <- factor(signif, levels=0:4, labels=c("",".  ","*  ","** ","***"))
+    if (!is.null(x)) {
+        # Which frailty distribution, pretty expression
+        frailty <- list(none      = "none",
+                        gamma     = "gamma",
+                        possta    = "positive stable",
+                        ingau     = "inverse Gaussian",
+                        lognormal = "lognormal")[paste(attributes(x)$frailty)]
+        
+        # Kendall's Tau
+        tau <- tau(x)
+        
+        # Which baseline hazard, pretty expression
+        baseline <- paste(toupper(substr(attributes(x)$dist, 1, 1)), 
+                          substr(attributes(x)$dist, 2, 100), 
+                          sep = "")
+        
+        # Loglikelihood value
+        loglikelihood <- round(attributes(x)$loglik, digits)
+        
+        x <- as.data.frame(x)
+        
+        # Significance of regression parameters with symbols
+        if ("p-val" %in% colnames(x)) {
+            signif <- symnum(x$"p-val", 
+                             c(0, .001, .01, .05, .1, 1),
+                             c('***', '**', '*', '.', ''), na = '')
+        }
+        
+        # Object to printed out
+        toprint <- round(x, digits)
+        if ("p-val" %in% colnames(x)) {
+            toprint$"p-val"[toprint$"p-val" < 10 ^ (-digits)] <- 
+                paste0(c('<.', rep(0, digits - 1), '1'), collapse = '')
+            toprint <- cbind(toprint, signif)
+            names(toprint)[length(names(toprint))] = ""
+        }
+        
+        # Output
+        if (silent) 
+            return(toprint)
+        else {
+            cat(paste("\nFrailty distribution:", 
+                      frailty,
+                      "\nBaseline hazard distribution:",
+                      baseline,
+                      "\nLoglikelihood:", 
+                      loglikelihood,
+                      "\n\n"))
+            print(as.matrix(toprint), na.print = na.print, quote = FALSE)
+            if ("p-val" %in% colnames(x))
+                cat("---\nSignif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n")
+            if (!is.null(tau))
+                cat(paste("\nKendall's Tau:", 
+                          ifelse(is.numeric(tau), round(tau, digits), tau), "\n"))
+        }
     }
+}
 
-    # Object to printed out
-    toprint <- round(x, digits)
-    if ("p-val" %in% colnames(x)) {
-      toprint <- cbind(toprint, signif)
-      names(toprint)[length(names(toprint))] = ""
-    }
-    
-    # Output
-    cat(paste("\nFrailty distribution:", 
-              frailty,
-              "\nBaseline hazard distribution:",
-              baseline,
-              "\nLoglikelihood:", 
-              loglikelihood,
-              "\n\n"))
-    print(as.matrix(toprint), na.print=na.print, quote=FALSE)
-    if ("p-val" %in% colnames(x))
-      cat("---\nSignif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n")
-    if (!is.null(tau))
-      cat(paste("\nKendall's Tau:", 
-                ifelse(is.numeric(tau), round(tau, digits), tau), "\n"))
-  }
+coef.parfm <- function(object, ...) {
+    object[!is.na(object[, 'p-val']), 'ESTIMATE']
 }

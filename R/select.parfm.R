@@ -25,7 +25,7 @@
 #   - correct  : the correction to use in case of many                         #
 #                events per cluster to get finite likelihood values.           #
 #                When correct!=0 the likelihood is divided by                  #
-#                10^(#clusters * correct) for computation,                     #
+#                10 ^ (#clusters * correct) for computation,                     #
 #                but the value of the log-likelihood in the output             #
 #                is the re-adjusted value.                                     #
 #                It is used only for models with Positive Stable frailty       #
@@ -42,7 +42,7 @@
 #                                                                              #
 #                                                                              #
 #   Date: December 21, 2011                                                    #
-#   Last modification on: October 17, 2012                                     #
+#   Last modification on: December 2, 2016                                     #
 ################################################################################
 
 select.parfm <- function(formula,
@@ -55,7 +55,8 @@ select.parfm <- function(formula,
                                 "weibull",
                                 "gompertz",
                                 "loglogistic",
-                                "lognormal"),
+                                "lognormal",
+                                "logskewnormal"),
                          frailty=c("none",
                                    "gamma",
                                    "ingau",
@@ -66,18 +67,18 @@ select.parfm <- function(formula,
                          Fparscale=1,
                          correct=0){
   warn <- getOption("warn")
-  options(warn=-1)
+  options(warn = -1)
   
-  res <- list(AIC=NULL, BIC=NULL)
+  res <- list(AIC = NULL, BIC = NULL)
   res$AIC <- res$BIC <- matrix(NA, length(dist), length(frailty),
-                               dimnames=list(dist, substr(frailty, 1, 6)))
+                               dimnames = list(dist, substr(frailty, 1, 6)))
   cat(paste("\n\n### - Parametric frailty models - ###",
             "Progress status:",
             "  'ok' = converged",
             "  'nc' = not converged\n",
             "                Frailty",
             "Baseline           ",
-            sep="\n"))
+            sep = "\n"))
   cat(c(none=" none  ", gamma=" gamma ", ingau=" invGau", 
         possta=" posSta", lognormal=" lognor")[frailty]
       
@@ -88,24 +89,25 @@ select.parfm <- function(formula,
           weibull     = "Weibull...........",
           gompertz    = "Gompertz..........",
           loglogistic = "loglogistic.......",
-          lognormal   = "lognormal.........")[d])
+          lognormal   = "lognormal.........",
+          logskewnormal   = "logskewnormal.....")[d])
     for (f in frailty) {
       cat("..")
-      model <- try(parfm(formula=formula, 
-                         cluster=cluster,
-                         strata=strata,
-                         data=data,
-                         inip=inip,
-                         iniFpar=iniFpar,
-                         dist=d,
-                         frailty=f,
-                         method=method,
-                         maxit=maxit,
-                         Fparscale=Fparscale,
-                         showtime=FALSE,
-                         correct=correct),
-                   silent=TRUE)
-      if (!("try-error" %in% class(model))){
+      model <- try(parfm(formula = formula, 
+                         cluster = cluster,
+                         strata = strata,
+                         data = data,
+                         inip = inip,
+                         iniFpar = iniFpar,
+                         dist = d,
+                         frailty = f,
+                         method = method,
+                         maxit = maxit,
+                         Fparscale = Fparscale,
+                         showtime = FALSE,
+                         correct = correct),
+                   silent = TRUE)
+      if (!("try-error" %in% class(model))) {
         res$AIC[d, substr(f, 1, 6)] <- AIC(model)
         res$BIC[d, substr(f, 1, 6)] <- BIC(model)
         cat("ok....")
@@ -115,7 +117,7 @@ select.parfm <- function(formula,
   cat("\n")
   class(res) <- "select.parfm"
   
-  options(warn=warn)
+  options(warn = warn)
   return(res)
 }
 

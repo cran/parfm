@@ -1,0 +1,19 @@
+Here we examine an example with simulated data.
+In order to generate data from a model with given 
+  baseline hazard $h_0(\cdot)$ and
+  frailty distribution $F(\cdot)$
+  we note that %times have survival function
+\begin{equation*}
+  S = S(t \mid U = u) = S_0(t)^u \sim U(0, 1),
+  \qquad t \ge 0,
+\end{equation*}
+  with $S_0(t) = \log\left(\int_0^t h_0(s) \mathrm d s\right)$ the baseline survival function.
+
+Therefore we can first simulate the frailty values $u$ from their distribution $F_U(\cdot)$
+  and then generate survival times as
+\begin{equation*}
+  t = S_0^{-1}(s^{-u}),
+\end{equation*}
+  with $s$ realizations of $S$.
+  
+  

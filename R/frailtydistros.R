@@ -6,7 +6,7 @@
 #  These are functions with parameters                                         #
 #   - k        : the order of the derivative of the Laplace transform          #
 #   - s        : the argument of the Laplace transform                         #
-#   - theta/nu/sigma2
+#   - theta/nu/sigma2                                                          #
 #              : the heterogeneity parameter of the frailty distribution       #
 #   - what     : the quantity to be returned by the function,                  #
 #                either "logLT" for \log[ (-1)^k \mathcal L^(k)(s) ]           # 
@@ -22,7 +22,7 @@
 #                is the re-adjusted value.                                     #
 #                                                                              #
 #   Date: December, 19, 2011                                                   #
-#   Last modification on: May 1, 2013                                          #
+#   Last modification on: January 25, 2017                                     #
 ################################################################################
 
 
@@ -38,10 +38,10 @@
 
 fr.none <- function(s,
                     what="logLT"){
-  if (what=="logLT")
-    return(-s)
-  else if (what == "tau")
-    return(NULL)
+    if (what=="logLT")
+        return(-s)
+    else if (what == "tau")
+        return(NULL)
 }
 
 
@@ -69,15 +69,15 @@ fr.gamma <- function(k,
                      s, 
                      theta, 
                      what="logLT"){
-  if (what=="logLT") {
-    res <- ifelse(k == 0, 
-                  - 1 / theta  * log(1 + theta * s),
-                  - (k + 1 / theta) * log(1 + theta * s) +
-                    sum(log(1 + (seq(from=0, to=k-1, by=1) * theta))))
-    return(res)
-  }
-  else if (what == "tau")
-    return(theta / (theta + 2))
+    if (what=="logLT") {
+        res <- ifelse(k == 0, 
+                      - 1 / theta  * log(1 + theta * s),
+                      - (k + 1 / theta) * log(1 + theta * s) +
+                          sum(log(1 + (seq(from=0, to=k-1, by=1) * theta))))
+        return(res)
+    }
+    else if (what == "tau")
+        return(theta / (theta + 2))
 }
 
 
@@ -103,30 +103,30 @@ fr.ingau <- function(k,
                      s, 
                      theta, 
                      what="logLT"){
-  if (what=="logLT") {
-    # separate sqrt's for numerical reasons in case of very small theta!
-    z <- theta^(-0.5) * sqrt(2 * s + theta^(-1))
-    res <- ifelse(k == 0,
-                  1 / theta * (1 - sqrt(1 + 2 * theta * s)),
-                  - k / 2 * log(2 * theta * s + 1) +
-                    log(besselK(z, k - 0.5)) - 
-                    (log(pi / (2 * z)) / 2 - z) +
-                    1 / theta * (1 - sqrt(1 + 2 * theta * s)))
-    return(res)
-  }
-  else if (what == "tau") {
-    integrand <- function(u) {
-      return(exp(-u) / u)
+    if (what=="logLT") {
+        # separate sqrt's for numerical reasons in case of very small theta!
+        z <- theta ^ (-0.5) * sqrt(2 * s + theta ^ (-1))
+        res <- ifelse(k == 0,
+                      1 / theta * (1 - sqrt(1 + 2 * theta * s)),
+                      -k / 2 * log(2 * theta * s + 1) +
+                          log(besselK(z, k - 0.5)) - 
+                          (log(pi / (2 * z)) / 2 - z) +
+                          1 / theta * (1 - sqrt(1 + 2 * theta * s)))
+        return(res)
     }
-    int <- integrate(integrand,
-                     lower=(2/theta), 
-                     upper=Inf)$value
-    tau <- 0.5 - (1 / theta) + (2 * theta^(-2) * exp(2 / theta) * int)
-    if (is.nan(tau) || tau < 0)
-      tau <- paste("The value of 'theta' is too small",
-                   "for computing the Kendall's Tau numerically!")
-    return(tau)
-  }
+    else if (what == "tau") {
+        integrand <- function(u) {
+            return(exp(-u) / u)
+        }
+        int <- integrate(integrand,
+                         lower=(2/theta), 
+                         upper=Inf)$value
+        tau <- 0.5 - (1 / theta) + (2 * theta^(-2) * exp(2 / theta) * int)
+        if (is.nan(tau) || tau < 0)
+            tau <- paste("The value of 'theta' is too small",
+                         "for computing the Kendall's Tau numerically!")
+        return(tau)
+    }
 }
 
 
@@ -141,13 +141,13 @@ fr.ingau <- function(k,
 ################################################################################
 
 J <- function(k, s, nu, Omega, correct){  
-  if(k == 0) sum <- 10^-correct else {
-    sum <- 0
-    for(m in 0:(k - 1)) {
-      sum <- sum + (Omega[k, m + 1] * s^(-m * (1 - nu)))
+    if(k == 0) sum <- 10^-correct else {
+        sum <- 0
+        for(m in 0:(k - 1)) {
+            sum <- sum + (Omega[k, m + 1] * s^(-m * (1 - nu)))
+        }
     }
-  }
-  return(sum)
+    return(sum)
 }
 
 
@@ -177,13 +177,13 @@ fr.possta <- function(k,
                       Omega,
                       what="logLT",
                       correct){
-  if (what=="logLT") {
-    res <- k * (log(1 - nu) - nu * log(s)) - s^(1 - nu) + 
-      log(J(k, s, nu, Omega, correct))
-    return(res)
-  }
-  else if (what == "tau")
-    return(nu)
+    if (what=="logLT") {
+        res <- k * (log(1 - nu) - nu * log(s)) - s^(1 - nu) + 
+            log(J(k, s, nu, Omega, correct))
+        return(res)
+    }
+    else if (what == "tau")
+        return(nu)
 }
 
 
@@ -205,11 +205,11 @@ fr.possta <- function(k,
 #   Last modification on: September 2, 2015                                    #
 ################################################################################
 g <- function(w, k, s, sigma2) {
-    - k * w + exp(w) * s + .5 * w^2 / sigma2
+    -k * w + exp(w) * s + w ^ 2 /  (2 * sigma2)
 }
 
 g1 <- function(w, k, s, sigma2) {
-    - k + exp(w) * s + w / sigma2
+    -k + exp(w) * s + w / sigma2
 }
 
 g2 <- function(w, k, s, sigma2) {
@@ -219,45 +219,46 @@ g2 <- function(w, k, s, sigma2) {
 Lapl <- Vectorize(function(s, k, sigma2) {
     # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
     WARN <- getOption("warn")
-    options(warn=-1)
-    wTilde <- optimize(f=g, c(-1e10, 1e10), maximum=FALSE,
-                       k=k, s=s, sigma2=sigma2)$minimum
-    options(warn=WARN)
+    options(warn = -1)
+    wTilde <- optimize(f = g, c(-1e10, 1e10), maximum = FALSE,
+                       k = k, s = s, sigma2 = sigma2)$minimum
+    options(warn = WARN)
     
     # Approximate the integral via Laplacian method
-    res <- (-1)^k * 
-        exp(-g(w=wTilde, k=k, s=s, sigma2=sigma2)) /
-        sqrt(sigma2 * g2(w=wTilde, k=k, s=s, sigma2=sigma2))
+    res <- (-1) ^ k * 
+        exp(-g(w = wTilde, k = k, s = s, sigma2 = sigma2)) /
+        sqrt(sigma2 * g2(w = wTilde, k = k, s = s, sigma2 = sigma2))
     return(res)
 }, 's')
 
 fr.lognormal <- function(k,
                          s,
                          sigma2,
-                         what="logLT"){
-    if (what=="logLT") {
+                         what = "logLT") {
+    if (what == "logLT") {
         # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
         WARN <- getOption("warn")
-        options(warn=-1)
-        wTilde <- optimize(f=g, c(-1e10, 1e10), maximum=FALSE,
-                           k=k, s=s, sigma2=sigma2)$minimum
-        options(warn=WARN)
+        options(warn = -1)
+        wTilde <- nlm(f = g, p = 0, k = k, s = s, sigma2 = sigma2)$estimate
+        options(warn = WARN)
         
         # Approximate the integral via Laplacian method
-        res <- (-1)^k * 
-            exp(-g(w=wTilde, k=k, s=s, sigma2=sigma2)) /
-            sqrt(sigma2 * g2(w=wTilde, k=k, s=s, sigma2=sigma2))
+        res <- -g(w = wTilde, k = k, s = s, sigma2 = sigma2) -
+            log(sigma2 * g2(w = wTilde, k = k, s = s, sigma2 = sigma2)
+            ) / 2
         return(res)
     }
     else if (what == "tau") {
         intTau <- Vectorize(function(x, intTau.sigma2=sigma2) {
             res <- x * 
-                Lapl(s=x, k = 0, sigma2 = intTau.sigma2) *
-                Lapl(s=x, k = 2, sigma2 = intTau.sigma2)
+                Lapl(s = x, k = 0, sigma2 = intTau.sigma2) *
+                Lapl(s = x, k = 2, sigma2 = intTau.sigma2)
             return(res)
         }, "x")
         
-        tauRes <- 4 * integrate(f=intTau, lower=0, upper=Inf, intTau.sigma2=sigma2)$value - 1
+        tauRes <- 4 * integrate(
+            f = intTau, lower = 0, upper = Inf, 
+            intTau.sigma2 = sigma2)$value - 1
         return(tauRes)
     }
 }

@@ -41,7 +41,7 @@ Cows are further clustered within herds and this clustering needs
     that could not be made publicly available.    
 }
 \references{
-  Duchateau L., Janssen P. (2008). \emph{The frailty model. Springer}.
+  Duchateau L, Janssen P (2008). \emph{The frailty model. Springer}.
   New York: Springer--Verlag.
 }
 \examples{
@@ -52,12 +52,12 @@ head(culling)
 culling <- culling[culling$Time > 0,]
 culling$TimeMonths <- culling$Time * 12 / 365.25
 
-coxmod <- parfm(Surv(TimeMonths, Status)~LogSCC, data=culling,
-                dist="exponential", frailty="none")
+coxmod <- parfm(Surv(TimeMonths, Status) ~ LogSCC, data = culling,
+                dist = "exponential", frailty = "none")
 coxmod
 
-pfmod <- parfm(Surv(TimeMonths, Status)~LogSCC, cluster="Herd", data=culling,
-               dist="exponential", frailty="gamma")
+pfmod <- parfm(Surv(TimeMonths, Status) ~ LogSCC, data = culling,
+               cluster = "Herd", dist = "exponential", frailty = "gamma")
 pfmod
 }
 }

@@ -1,6 +1,6 @@
-
 export(        parfm, 
          anova.parfm,
+          coef.parfm,
             ci.parfm,
          print.parfm,
         logLik.parfm,
@@ -13,18 +13,19 @@ export(        parfm,
   print.select.parfm,
                  tau)
 
-S3method(anova, parfm)
-S3method(plot, parfm)
-S3method(print, parfm)
-S3method(logLik, parfm)
-S3method(predict, parfm)
-S3method(plot, predict.parfm)
-S3method(print, predict.parfm)
-S3method(plot, select.parfm)
-S3method(print, select.parfm)
+S3method(anova,           parfm)
+S3method(coef,            parfm)
+S3method(plot,            parfm)
+S3method(print,           parfm)
+S3method(logLik,          parfm)
+S3method(predict,         parfm)
+S3method(plot,    predict.parfm)
+S3method(print,   predict.parfm)
+S3method(plot,    select.parfm)
+S3method(print,   select.parfm)
 
-import(msm, eha, graphics, survival)
+import(msm, graphics, optimx, sn, survival)
 importFrom("stats", 
            "AIC", "BIC", "aggregate", "delete.response", "dlnorm", "formula",
            "integrate", "model.matrix", "nlm", "optimize", "pchisq", "plnorm",
-           "pnorm", "qnorm", "terms", "update.formula", "xtabs")
+           "pnorm", "qnorm", "symnum", "terms", "update.formula", "xtabs")

@@ -52,7 +52,7 @@ Parity is often converted into a binary covariate, grouping all the cows
     that could not be made publicly available.    
 }
 \references{
-  Duchateau L., Janssen P. (2008). \emph{The frailty model. Springer}.
+  Duchateau L, Janssen P (2008). \emph{The frailty model. Springer}.
   New York: Springer--Verlag.
 }
 \examples{
@@ -62,30 +62,29 @@ head(reconstitution)
                 
 
 ################################################################################
-#Example 3.1: The [...] frailty model for the time to blood-milk barrier       #
-#reconstitution: the effect of treatment                                       #
-#Duchateau and Janssen (2008, page 79)                                         #
+# Example 3.1: The [...] frailty model for the time to blood-milk barrier      #
+# reconstitution: the effect of treatment                                      #
+# Duchateau and Janssen (2008, page 79)                                        #
 ################################################################################
 pfmDrug <- parfm(Surv(Time, Status) ~ Drug,
-                 cluster="Cowid", dist="exponential",
-                 frailty="gamma", data=reconstitution)
+                 cluster = "Cowid", dist = "exponential",
+                 frailty = "gamma", data = reconstitution)
 ci.parfm(pfmDrug)
                 
 
 ################################################################################
-#Example 3.2: The [...] frailty model for the time to blood-milk barrier       #
-#reconstitution: the heifer effect                                             #
-#Duchateau and Janssen (2008, page 82)                                         #
+# Example 3.2: The [...] frailty model for the time to blood-milk barrier      #
+# reconstitution: the heifer effect                                            #
+# Duchateau and Janssen (2008, page 82)                                        #
 ################################################################################
 pfmHeifer <- parfm(Surv(Time, Status) ~ Heifer,
-                   cluster="Cowid", dist="exponential",
-                   frailty="gamma", data=reconstitution)
+                   cluster = "Cowid", dist = "exponential",
+                   frailty = "gamma", data = reconstitution)
 ci.parfm(pfmHeifer)
-
-
-
 }
 \keyword{datasets}
+
+
 \keyword{reconstitution}
 \keyword{reconstitution}
 \keyword{cows}

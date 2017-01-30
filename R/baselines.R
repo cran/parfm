@@ -10,8 +10,8 @@
 #               or "lh", the log-hazard                                        #
 #                                                                              #
 #                                                                              #
-#   Date:                 December, 19, 2011                                   #
-#   Last modification on: June, 27, 2012                                       #
+#   Date:                 December 19, 2011                                    #
+#   Last modification on: January 25, 2017                                     #
 ################################################################################
 
 
@@ -28,7 +28,7 @@
 #    [2] lambda > 0                                                            #
 #                                                                              #
 #   Hazard:                                                                    #
-#    h(t) = \rho \lambda t^(\rho-1)                                            #
+#    h(t) = \rho \lambda t ^ (\rho-1)                                            #
 #                                                                              #
 #                                                                              #
 #   Date: December, 19, 2011                                                   #
@@ -37,10 +37,10 @@
 weibull <- function(pars,
                     t, 
                     what){
-  if (what == "H")
-    return(pars[2] * t^(pars[1]))
-  else if (what == "lh")
-    return(log(pars[1]) + log(pars[2]) + ((pars[1] - 1) * log(t)))
+    if (what == "H")
+        return(pars[2] * t ^ (pars[1]))
+    else if (what == "lh")
+        return(log(pars[1]) + log(pars[2]) + ((pars[1] - 1) * log(t)))
 }
 
 
@@ -53,7 +53,7 @@ weibull <- function(pars,
 #    [2] lambda > 0                                                            #
 #                                                                              #
 #   Hazard:                                                                    #
-#    h(t) = [\rho / (\lambda t^(\rho + 1))] / [exp{1 /(\lambda t^\rho)} - 1]   #
+#    h(t) = [\rho / (\lambda t ^ (\rho + 1))] / [exp{1 /(\lambda t^\rho)} - 1]   #
 #    H(t) = log[exp{1 /(\lambda t^\rho)} - 1]                                  #
 #                                                                              #
 #                                                                              #
@@ -62,13 +62,13 @@ weibull <- function(pars,
 ################################################################################
 
 inweibull <- function(pars,
-                       t, 
-                       what){
-  if (what == "H")
-    return(-log(1 - exp(-1 / (pars[2] * t^(pars[1])))))
-  else if (what == "lh")
-    return(log(pars[1]) - log(pars[2]) - ((pars[1] + 1) * log(t)) -
-      log(exp(1 / (pars[2] * t^(pars[1]))) - 1))
+                      t, 
+                      what){
+    if (what == "H")
+        return(-log(1 - exp(-1 / (pars[2] * t ^ (pars[1])))))
+    else if (what == "lh")
+        return(log(pars[1]) - log(pars[2]) - ((pars[1] + 1) * log(t)) -
+                   log(exp(1 / (pars[2] * t ^ (pars[1]))) - 1))
 }
 
 
@@ -89,10 +89,10 @@ inweibull <- function(pars,
 exponential <- function(pars,
                         t, 
                         what){
-  if (what == "H")
-    return(pars * t)
-  else if (what == "lh") 
-    return(log(pars))
+    if (what == "H")
+        return(pars * t)
+    else if (what == "lh") 
+        return(log(pars))
 }
 
 
@@ -115,10 +115,10 @@ exponential <- function(pars,
 gompertz <- function(pars,
                      t, 
                      what){
-  if (what == "H") 
-    return(pars[2] / pars[1] * (exp(pars[1] * t) - 1))
-  else if (what == "lh") 
-    return(log(pars[2]) + pars[1] * t)
+    if (what == "H") 
+        return(pars[2] / pars[1] * (exp(pars[1] * t) - 1))
+    else if (what == "lh") 
+        return(log(pars[2]) + pars[1] * t)
 }
 
 
@@ -145,11 +145,11 @@ gompertz <- function(pars,
 lognormal <- function(pars,
                       t, 
                       what){
-  if (what == "H")  #return - log (S)
-    return(- log(1 - plnorm(t, meanlog=pars[1], sdlog=pars[2])))
-  else if (what == "lh")  #return log(f) - log(S)
-    return(dlnorm(t, meanlog=pars[1], sdlog=pars[2], log=TRUE) -
-      log(1 - plnorm(t, meanlog=pars[1], sdlog=pars[2])))
+    if (what == "H")  #return - log (S)
+        return(- log(1 - plnorm(t, meanlog = pars[1], sdlog = pars[2])))
+    else if (what == "lh")  #return log(f) - log(S)
+        return(dlnorm(t, meanlog = pars[1], sdlog = pars[2], log = TRUE) -
+                   log(1 - plnorm(t, meanlog = pars[1], sdlog = pars[2])))
 }
 
 
@@ -174,9 +174,52 @@ lognormal <- function(pars,
 loglogistic <- function(pars,
                         t, 
                         what){
-  if (what == "H") 
-    return(log(1 + exp(pars[1]) * t^(pars[2])))
-  else if (what == "lh") 
-    return(pars[1] + log(pars[2]) + (pars[2] - 1) * log(t) - 
-      log(1 + exp(pars[1]) * t^pars[2]) )
+    if (what == "H") 
+        return(log(1 + exp(pars[1]) * t ^ (pars[2])))
+    else if (what == "lh") 
+        return(pars[1] + log(pars[2]) + (pars[2] - 1) * log(t) - 
+                   log(1 + exp(pars[1]) * t ^ pars[2]) )
+}
+
+
+
+
+################################################################################
+#                                                                              #
+#   Log-skewNormal baseline hazard function                                    #
+#   Azzalini, Adelchi. (1985). A class of distributions which includes         #
+#     the normal ones. Scandinavian Journal of Statistics, 12:171-178          # 
+#                                                                              #
+#   Parameters:                                                                #
+#    [1] xi \in \mathbb R, the location parameter                              #
+#    [2] omega > 0, the scale parameter (called omega in original paper)       #
+#    [3] alpha \in \mathbb R, the shape parameter                              #
+#                                                                              #
+#   Density:                                                                   #
+#    f(t) = 2  / t \phi_d((t - \xi) / \omega) \Phi(\alpha (t - \xi) / \omega)  #
+#                                                                              #
+#                                                                              # 
+#   Author: Andrea Callegaro                                                   #
+#   Date: November, 22, 2016                                                   #
+################################################################################
+
+logskewnormal <- function(pars,
+                          t, 
+                          what){
+    # library(sn)
+    #log-skew normal density
+    dlsn <- Vectorize(function(t, pars) {
+        1 / t * dsn(log(t), xi = pars[1], omega = pars[2], alpha = pars[3])
+    }, 't')
+    #log-skew normal cdf
+    plsn <- Vectorize(function(t, pars) {
+        psn(log(t), xi = pars[1], omega = pars[2], alpha = pars[3])
+    }, 't')
+    
+    if (what == "H")  #return -log(S)
+        return(-log(1 - plsn(t, pars = pars)))
+    
+    else if (what == "lh")  #return (log(f) - log(S))
+        return(log(dlsn(t, pars = pars)) -
+                   log(1 - plsn(t, pars = pars)))
 }

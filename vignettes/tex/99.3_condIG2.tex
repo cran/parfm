@@ -1,0 +1,26 @@
+Let $U \sim \textrm{IG}^{\star} ( \theta)$, then the distribution of 
+  $U \mid \bm{z}_{i}, \bm \tau_i; \bm{\psi}, \bm{\beta}, \theta$ is
+\begin{eqnarray*}
+f ( u_i \mid \bm{z}_{i}, \bm{\tau}_{i}; \bm{\psi}, \bm{\beta}, \theta ) 
+  & = & \frac{
+    L_{\textrm{cond}} \left( \bm{\psi}, \bm{\beta} \mid u_{i}; \bm{z}_i \right) f ( u_{i}; \theta )
+  }{
+    L_{\textrm{marg}} \left( \bm{\psi}, \bm{\beta}, \theta; \bm{z}_i \right)
+  } \\
+  &\propto& L_{\textrm{cond}} \left( \bm{\psi}, \bm{\beta} \mid u_{i}; \bm{z}_i \right) f ( u_{i}; \theta ) \\
+  & = & \displaystyle \left[ 
+      \prod_{j=1}^{n_{i}} \left( h_{0} ( y_{ij} ) u_i \exp ( \bm{x}^\top_{ij} \bm{\beta} ) \right)^{\delta_{ij}} 
+    \right] 
+    \exp \left( - \sum_{j=1}^{n_{i}} H_{0} ( y_{ij} ) u_i \exp ( \bm{x}^\top_{ij} \bm{\beta} ) \right) \\
+    && \qquad \times \sqrt{\frac{1}{2 \pi \theta}} 
+    u_i^{-\tfrac32} 
+    \exp \left( -\frac{1}{2 \theta u_{i}} ( u_i - 1 )^{2} \right)   \\
+  &\propto& u_i^{d_i - \tfrac32} \exp \left( - u_i 
+    \left[\sum_{j=1}^{n_{i}} H_{0} ( y_{ij} ) \exp ( \bm{x}^\top_{ij} \bm{\beta} ) \right] - 
+          \frac{1}{2 \theta} u_i - \frac{1}{2 \theta} \frac{1}{u_{i}} \right) \\
+  & = & u_{i}^{d_i - \tfrac32} \exp \left( - \left( \frac{1}{2 \theta} + \sum_{j=1}^{n_{i}} H_{0} ( y_{ij} ) \exp ( \bm{x}^\top_{ij} \bm{\beta} ) \right) u_i - 
+          \frac{1}{2 \theta} \frac{1}{u_{i}} \right),
+\end{eqnarray*}
+which is proportional to the density of a generalised inverse Gaussian distribution \cite[Section~A.3.6]{Hougaard00}
+with parameters given by Equations~\ref{eq:GIGpar1}--\ref{eq:GIGpar3}.
+\qed

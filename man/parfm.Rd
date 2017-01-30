@@ -1,15 +1,17 @@
 \name{parfm}
 \alias{parfm}
-\alias{print.parfm}
-\alias{plot.parfm}
+\alias{coef.parfm}
 \alias{logLik.parfm}
+\alias{plot.parfm}
+\alias{print.parfm}
 \title{Parametric Frailty Models}
 \description{Fits parametric Frailty Models by maximizing the marginal likelihood.}
 
 \usage{
-parfm(formula, cluster=NULL, strata=NULL, data, inip=NULL, iniFpar=NULL,
-      dist="weibull", frailty="none", method="BFGS", 
-      maxit=500, Fparscale=1, showtime=TRUE, correct=0)
+parfm(formula, cluster = NULL, strata = NULL, data,
+      inip = NULL, iniFpar = NULL,
+      dist = "weibull", frailty = "none", method = "nlminb", 
+      maxit = 500, Fparscale = 1, showtime = FALSE, correct = 0)
 }
 
 \arguments{
@@ -34,14 +36,13 @@ in 'formula'.}
   \item{dist}{
     The baseline hazard distribution.
     One of \code{weibull}, \code{exponential}, \code{gompertz},
-\code{lognormal} or
-\code{loglogistic}.}
+            \code{lognormal}, \code{loglogistic}, \code{logskewnormal}, or \code{logskewnormal}.}
   \item{frailty}{
     The Frailty distribution.
     One of: \code{none}, \code{gamma}, \code{ingau}, \code{possta} or \code{lognormal}.}
-  \item{method}{The optimisation method from the function \code{\link{optim}()}.}
-  \item{maxit}{Maximum number of iterations (see \code{\link{optim}()}).}
-  \item{Fparscale}{the scaling value for the frailty parameter in \code{\link{optim}()}. 
+  \item{method}{The optimisation method from the function \code{\link{optimx}()}.}
+  \item{maxit}{Maximum number of iterations (see \code{\link{optimx}()}).}
+  \item{Fparscale}{the scaling value for the frailty parameter in \code{\link{optimx}()}. 
     Optimisation is performed on Fpar/Fparscale.}
   \item{showtime}{Show the execution time?}
   \item{correct}{A correction factor that does not change the marginal
@@ -82,6 +83,17 @@ The loglogistic hazard (\code{dist="loglogistic"}) is
   h(t; alpha, kappa) = [exp(alpha) * kappa * t^(kappa - 1)] / [1 + exp(alpha) * t^(kappa)]}
 with \eqn{\alpha \in   {R}, \kappa > 0}{alpha in R, kappa > 0}.
 
+The log-skew-normal hazard (\code{dist="logskewnormal"}) is 
+    obtained as the ratio between the density and the cumulative distribution function
+    of a log-\link[sn:dsn]{skew normal} random variable (Azzalini, 1985),
+    which has density
+\deqn{f(t; \xi, \omega, \alpha) = \frac{2 \omega}{t}
+    \phi\left(\frac{\log(t) - \xi}{\omega}\right)
+    \Phi\left(\alpha\frac{\log(t)-\xi}{\omega}\right)}
+with \eqn{\xi \in {R}, \omega > 0, \alpha \in {R}}{xi in R, omega > 0, alpha in R}, and where
+\eqn{\phi}{phi} and \eqn{\Phi}{Phi} are the density and distribution functions of a standard Normal random variable.
+Of note, if \eqn{\alpha=0}{alpha=0} then the log-ske-normal boils down 
+    to the log-normal distribution, with \eqn{\mu=\xi}{mu=xi} and \eqn{\sigma=\omega}{sigma=omega}.
 
 
 \strong{Frailty distributions}
@@ -113,29 +125,32 @@ As the Laplace tranform of the lognormal frailties does not exist in closed form
 \value{An object of class \code{parfm}.}
 
 \references{
-  Marco Munda, Federico Rotolo, Catherine Legrand (2012).
+  Munda M, Rotolo F, Legrand C (2012).
   parfm: Parametric Frailty Models in R.
   Journal of Statistical Software, 51(11), 1-20. 
-  URL http://www.jstatsoft.org/v51/i11/.
+  DOI \href{http://dx.doi.org/10.18637/jss.v051.i11}{10.18637/jss.v051.i11}
 
-  Duchateau L., Janssen P. (2008) 
-  The frailty model. 
-  Springer.
+  Duchateau L, Janssen P (2008). The frailty model. Springer.
 
-  Wienke A. (2010) 
+  Wienke A (2010).
   Frailty Models in Survival Analysis. 
   Chapman & Hall/CRC biostatistics series. Taylor and Francis.
 
-  Goutis C., Casella G. (1999)
+  Goutis C, Casella G (1999).
   Explaining the Saddlepoint Approximation.
   The American Statistician 53(3), 216-224.
-  DOI: <a href="dx.doi.org/10.1080/00031305.1999.10474463"
-    target="_blank">10.1080/00031305.1999.10474463</a>
+  DOI \href{http://dx.doi.org/10.1080/00031305.1999.10474463}{10.1080/00031305.1999.10474463}
+    
+ Azzalini A (1985).
+ A class of distributions which includes the normal ones.
+ Scandinavian Journal of Statistics, 12(2):171-178.
+ URL \url{http://www.jstor.org/stable/4615982}
 
 }
-\author{Federico Rotolo <federico.rotolo@stat.unipd.it> and Marco Munda
-<marco.munda@arlenda.com>}
-%%\note{}
+\author{
+  \packageAuthor{parfm}
+}
+
 
 \seealso{
   \code{\link{select.parfm}},
@@ -151,18 +166,23 @@ data(kidney)
  # type 'help(kidney)' for a description of the data set
 kidney$sex <- kidney$sex - 1
 
-parfm(Surv(time,status) ~ sex + age, cluster="id",
-      data=kidney, dist="exponential", frailty="gamma")
+parfm(Surv(time,status) ~ sex + age, cluster = "id",
+      data = kidney, dist = "exponential", frailty = "gamma")
+      
+      
+parfm(Surv(time,status) ~ sex + age, cluster = "id",
+      data = kidney, dist = "exponential", frailty = "lognormal")
 
 \donttest{
-parfm(Surv(time,status) ~ sex + age, cluster="id",
-      data=kidney, dist="exponential", frailty="lognormal")
+parfm(Surv(time,status) ~ sex + age, cluster = "id",
+      data = kidney, dist = "weibull", frailty = "ingau")
 
-parfm(Surv(time,status) ~ sex + age, cluster="id",
-      data=kidney, dist="weibull", frailty="ingau")
+parfm(Surv(time,status) ~ sex + age, cluster = "id",
+      data = kidney, dist="gompertz", frailty="possta", method="CG")
 
-parfm(Surv(time,status) ~ sex + age, cluster="id",
-      data=kidney, dist="gompertz", frailty="possta", method="Nelder-Mead")
+
+parfm(Surv(time,status) ~ sex + age, cluster = "id",
+      data = kidney, dist="gompertz", frailty="logskewnormal")
 #--------------------------
 
 #------Asthma dataset------
@@ -170,9 +190,17 @@ data(asthma)
 head(asthma)
   # type 'help(asthma)' for a description of the data set
 
-parfm(Surv(Begin, End, Status)~Drug, cluster="Patid", 
-      data=asthma[asthma$Fevent==0,],
-      dist="weibull", frailty="gamma")
+asthma$time <- asthma$End - asthma$Begin
+parfm(Surv(time, Status) ~ Drug, cluster = "Patid", data = asthma,
+      dist = "weibull", frailty = "gamma")
+      
+      
+parfm(Surv(time, Status) ~ Drug, cluster = "Patid", data = asthma,
+      dist = "weibull", frailty = "lognormal")
+
+parfm(Surv(Begin, End, Status) ~ Drug, cluster = "Patid", 
+      data = asthma[asthma$Fevent == 0, ],
+      dist = "weibull", frailty = "lognormal", method = "Nelder-Mead")
 #--------------------------
 }
 }
@@ -182,8 +210,3 @@ parfm(Surv(Begin, End, Status)~Drug, cluster="Patid",
 \keyword{parametric}
 \keyword{marginal likelihood}
 \keyword{shared}
-
-
-
-
-
