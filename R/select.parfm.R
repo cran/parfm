@@ -25,7 +25,7 @@
 #   - correct  : the correction to use in case of many                         #
 #                events per cluster to get finite likelihood values.           #
 #                When correct!=0 the likelihood is divided by                  #
-#                10 ^ (#clusters * correct) for computation,                     #
+#                10 ^ (#clusters * correct) for computation,                   #
 #                but the value of the log-likelihood in the output             #
 #                is the re-adjusted value.                                     #
 #                It is used only for models with Positive Stable frailty       #
@@ -53,6 +53,8 @@ select.parfm <- function(formula,
                          iniFpar=NULL,
                          dist=c("exponential",
                                 "weibull",
+                                "inweibull",
+                                "frechet",
                                 "gompertz",
                                 "loglogistic",
                                 "lognormal",
@@ -69,6 +71,12 @@ select.parfm <- function(formula,
   warn <- getOption("warn")
   options(warn = -1)
   
+  dist <- match.arg(dist, several.ok = TRUE)
+  if (('inweibull' %in% dist) & 'frechet' %in% dist) {
+      warning("Baselines 'inweibull' and 'frechet' are synonyms.")
+      dist <- setdiff(dist, 'frechet')
+  }
+  
   res <- list(AIC = NULL, BIC = NULL)
   res$AIC <- res$BIC <- matrix(NA, length(dist), length(frailty),
                                dimnames = list(dist, substr(frailty, 1, 6)))
@@ -79,14 +87,14 @@ select.parfm <- function(formula,
             "                Frailty",
             "Baseline           ",
             sep = "\n"))
-  cat(c(none=" none  ", gamma=" gamma ", ingau=" invGau", 
-        possta=" posSta", lognormal=" lognor")[frailty]
-      
-      )
+  cat(c(none = " none  ", gamma = " gamma ", ingau = " invGau", 
+        possta = " posSta", lognormal = " lognor")[frailty])
   for (d in dist) {
     cat("\n")
     cat(c(exponential = "exponential.......",
           weibull     = "Weibull...........",
+          inweibull     = "inWeibull.........",
+          frechet     = "inWeibull...........",
           gompertz    = "Gompertz..........",
           loglogistic = "loglogistic.......",
           lognormal   = "lognormal.........",

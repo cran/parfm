@@ -1,0 +1,3 @@
+- plot baseline hazard (also with covariate values?)
+- predict with newdata 
+- plot median survival time distribution

@@ -72,7 +72,7 @@ On the other hand, \code{proc nlmixed} deals with the parametric version by usin
 In the parametric setting, \proglang{STATA} \citep{STATA} provides some flexibility.
 The \code{streg}~command \citep{Gutierrez02} is able to perform maximum likelihood estimation 
   with various choices of baselines:
-  exponential, Weibull, Gompertz, lognormal, loglogistic, and generalised gamma.
+  exponential, Weibull, Weibull, Gompertz, lognormal, loglogistic, and generalised gamma.
 Take notice, however, that \proglang{STATA} fits the accelerated failure time model.
 Still, with exponential or Weibull baselines, both the proportional hazards and the accelerated failure time
   representations are allowed.   
@@ -88,8 +88,8 @@ For a deeper overview of who supports what, and for a comparison of some of the 
 Hereinbelow, we illustrate \pkg{parfm} \citep{R:parfm}, a new \proglang{R} package that fits 
     the gamma, the positive stable, the inverse Gaussian, and lognormal
     proportional hazards frailty models 
-    with either exponential, Weibull, Gompertz, lognormal, 
-    or loglogistic baseline.
+    with either exponential, Weibull, inverse Weibull (Fr\'echet), Gompertz,
+    lognormal, log-skewNormal, or loglogistic baseline.
 The main advantage of \pkg{parfm} therefore relies on the large choice 
   of frailty distributions and parametric baseline hazards it supports.
 Parameter estimation is done by maximising the marginal log-likelihood.

@@ -49,7 +49,6 @@ The censoring is due to the fact that dog owners do not show up anymore.
 }
 \examples{
 \donttest{
-library(parfm)
 data(diagnosis)
 head(diagnosis)
 

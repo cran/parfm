@@ -6,11 +6,16 @@
 \alias{print.parfm}
 \title{Parametric Frailty Models}
 \description{Fits parametric Frailty Models by maximizing the marginal likelihood.}
+\encoding{UTF-8}
 
 \usage{
 parfm(formula, cluster = NULL, strata = NULL, data,
       inip = NULL, iniFpar = NULL,
-      dist = "weibull", frailty = "none", method = "nlminb", 
+      dist = c("weibull", "inweibull", "frechet", "exponential", 
+               "gompertz", "loglogistic", "lognormal", "logskewnormal"),
+      frailty   = c("none", "gamma", "ingau", "possta",
+                    "lognormal", "loglogistic"),
+      method = "nlminb", 
       maxit = 500, Fparscale = 1, showtime = FALSE, correct = 0)
 }
 
@@ -35,8 +40,8 @@ in 'formula'.}
   \item{iniFpar}{The initial value of the frailty parameter.}
   \item{dist}{
     The baseline hazard distribution.
-    One of \code{weibull}, \code{exponential}, \code{gompertz},
-            \code{lognormal}, \code{loglogistic}, \code{logskewnormal}, or \code{logskewnormal}.}
+    One of \code{weibull}, \code{inweibull}, \code{frechet}, \code{exponential},
+           \code{gompertz}, \code{lognormal}, \code{loglogistic}, or \code{logskewnormal}.}
   \item{frailty}{
     The Frailty distribution.
     One of: \code{none}, \code{gamma}, \code{ingau}, \code{possta} or \code{lognormal}.}
@@ -57,15 +62,20 @@ in 'formula'.}
 
 \strong{Baseline hazards}
 
-The exponential hazard (\code{dist="exponential"}) is
-\deqn{h(t; \lambda) = \lambda}{
-  h(t; lambda) = lambda}
-with \eqn{\lambda > 0}{lambda > 0}.
-
 The Weibull hazard (\code{dist="weibull"}) is
 \deqn{h(t; \rho, \lambda) = \rho \lambda t^{\rho - 1}}{
   h(t; rho, lambda) = rho * lambda * t^(rho - 1)}
 with \eqn{\rho, \lambda > 0}{rho, lambda > 0}.
+
+The inverse Weibull (or Fréchet) hazard (\code{dist="inweibull"} or \code{dist="frechet"}) is
+\deqn{h(t; \rho, \lambda) = \frac{\rho \lambda t^{-\rho - 1}}{\exp(\lambda t^{-\rho}) - 1}}{
+  h(t; rho, lambda) = rho * lambda * t^(-rho - 1) / (exp(lambda t^-rho) - 1)}
+with \eqn{\rho, \lambda > 0}{rho, lambda > 0}.
+
+The exponential hazard (\code{dist="exponential"}) is
+\deqn{h(t; \lambda) = \lambda}{
+  h(t; lambda) = lambda}
+with \eqn{\lambda > 0}{lambda > 0}.
 
 The Gompertz hazard (\code{dist="gompertz"}) is
 \deqn{h(t; \gamma, \lambda) = \lambda \exp ( \gamma t )}{
@@ -87,12 +97,12 @@ The log-skew-normal hazard (\code{dist="logskewnormal"}) is
     obtained as the ratio between the density and the cumulative distribution function
     of a log-\link[sn:dsn]{skew normal} random variable (Azzalini, 1985),
     which has density
-\deqn{f(t; \xi, \omega, \alpha) = \frac{2 \omega}{t}
+\deqn{f(t; \xi, \omega, \alpha) = \frac{2}{\omega t}
     \phi\left(\frac{\log(t) - \xi}{\omega}\right)
     \Phi\left(\alpha\frac{\log(t)-\xi}{\omega}\right)}
 with \eqn{\xi \in {R}, \omega > 0, \alpha \in {R}}{xi in R, omega > 0, alpha in R}, and where
 \eqn{\phi}{phi} and \eqn{\Phi}{Phi} are the density and distribution functions of a standard Normal random variable.
-Of note, if \eqn{\alpha=0}{alpha=0} then the log-ske-normal boils down 
+Of note, if \eqn{\alpha=0}{alpha=0} then the log-skew-normal boils down 
     to the log-normal distribution, with \eqn{\mu=\xi}{mu=xi} and \eqn{\sigma=\omega}{sigma=omega}.
 
 
@@ -159,8 +169,6 @@ As the Laplace tranform of the lognormal frailties does not exist in closed form
 }
 
 \examples{
-library(parfm)
-
 #------Kidney dataset------
 data(kidney) 
  # type 'help(kidney)' for a description of the data set
@@ -170,10 +178,10 @@ parfm(Surv(time,status) ~ sex + age, cluster = "id",
       data = kidney, dist = "exponential", frailty = "gamma")
       
       
+\donttest{
 parfm(Surv(time,status) ~ sex + age, cluster = "id",
       data = kidney, dist = "exponential", frailty = "lognormal")
 
-\donttest{
 parfm(Surv(time,status) ~ sex + age, cluster = "id",
       data = kidney, dist = "weibull", frailty = "ingau")
 

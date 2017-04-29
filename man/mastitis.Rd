@@ -85,7 +85,6 @@ The difference in teat end condition between front and rear quarters
 }
 \examples{
 \donttest{
-library(parfm)
 data(mastitis)
 head(mastitis)
 

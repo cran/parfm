@@ -66,7 +66,6 @@ Other covariates that are used in the analysis are
 }
 \examples{
 \donttest{
-library(parfm)
 data(insem)
 head(insem)
 

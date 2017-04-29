@@ -25,26 +25,34 @@
 #                10^(#clusters * correct) for computation,                     #
 #                but the value of the log-likelihood in the output             #
 #                is the re-adjusted value.                                     #
+#   - transform: should the parameters tranformed to their parameter space or  #
+#                are they assumed to be already on their scale?                #
+#                The first case (TRUE, the default) is for Mll optimization,   #
+#                The secand case (FALSE) is used to straightforwardly compute  #
+#                the Hessian matrix on the risght parameter scale              #
 #                                                                              #
+################################################################################
 #                                                                              #
-#   Date: December 19, 2011                                                    #
-#   Last modification on: January 24, 2017                                     #
+#   Date:              December 19, 2011                                       #
+#   Last modification: January 31, 2017                                        #
+#                                                                              #
 ################################################################################
 
 Mloglikelihood <- function(p,
                            obs,
                            dist,
                            frailty,
-                           correct) { 
+                           correct,
+                           transform = TRUE) { 
     # ---- Assign the number of frailty parameters 'obs$nFpar' --------------- #
     # ---- and compute Sigma for the Positive Stable frailty ----------------- #
     
     if (frailty %in% c("gamma", "ingau")) {
-        theta <- exp(p[1])
+        theta <- ifelse(transform, exp(p[1]), p[1])
     } else if (frailty == "lognormal") {
-        sigma2 <- exp(p[1])
+        sigma2 <- ifelse(transform, exp(p[1]), p[1])
     } else if (frailty == "possta") {
-        nu <- exp(-exp(p[1]))
+        nu <- ifelse(transform, exp(-exp(p[1])), p[1])
         D <- max(obs$dqi)
         Omega <- Omega(D, correct = correct, nu = nu)
     }
@@ -54,29 +62,59 @@ Mloglikelihood <- function(p,
     if (frailty == 'none') obs$nFpar <- 0
     
     # baseline parameters
-    if (dist %in% c("weibull", "inweibull")) {
-        pars <- cbind(rho    = exp(p[obs$nFpar + 1:obs$nstr]),
-                      lambda = exp(p[obs$nFpar + obs$nstr + 1:obs$nstr]))
+    if (dist %in% c("weibull", "inweibull", "frechet")) {
+        if (transform) {
+            pars <- cbind(rho    = exp(p[obs$nFpar + 1:obs$nstr]),
+                          lambda = exp(p[obs$nFpar + obs$nstr + 1:obs$nstr]))
+        } else {
+            pars <- cbind(rho    = p[obs$nFpar + 1:obs$nstr],
+                          lambda = p[obs$nFpar + obs$nstr + 1:obs$nstr])
+        }
         beta <- p[-(1:(obs$nFpar + 2 * obs$nstr))]
     } else if (dist == "exponential") {
-        pars <- cbind(lambda = exp(p[obs$nFpar + 1:obs$nstr]))
+        if (transform) {
+            pars <- cbind(lambda = exp(p[obs$nFpar + 1:obs$nstr]))
+        } else {
+            pars <- cbind(lambda = p[obs$nFpar + 1:obs$nstr])
+        }
         beta <- p[-(1:(obs$nFpar + obs$nstr))]
     } else if (dist == "gompertz") {
-        pars <- cbind(gamma  = exp(p[obs$nFpar + 1:obs$nstr]),
-                      lambda = exp(p[obs$nFpar + obs$nstr + 1:obs$nstr]))    
+        if (transform) {
+            pars <- cbind(gamma  = exp(p[obs$nFpar + 1:obs$nstr]),
+                          lambda = exp(p[obs$nFpar + obs$nstr + 1:obs$nstr]))
+        } else {
+            pars <- cbind(gamma  = p[obs$nFpar + 1:obs$nstr],
+                          lambda = p[obs$nFpar + obs$nstr + 1:obs$nstr])
+        }  
         beta <- p[-(1:(obs$nFpar + 2 * obs$nstr))]
     } else if (dist == "lognormal") {
-        pars <- cbind(mu    = p[obs$nFpar + 1:obs$nstr],
-                      sigma = exp(p[obs$nFpar + obs$nstr + 1:obs$nstr]))    
+        if (transform) {
+            pars <- cbind(mu    = p[obs$nFpar + 1:obs$nstr],
+                          sigma = exp(p[obs$nFpar + obs$nstr + 1:obs$nstr]))
+        } else {
+            pars <- cbind(mu    = p[obs$nFpar + 1:obs$nstr],
+                          sigma = p[obs$nFpar + obs$nstr + 1:obs$nstr])
+        }
         beta <- p[-(1:(obs$nFpar + 2 * obs$nstr))]
     } else if (dist == "loglogistic") {
-        pars <- cbind(alpha = p[obs$nFpar + 1:obs$nstr],
-                      kappa = exp(p[obs$nFpar + obs$nstr + 1:obs$nstr]))    
+        if (transform) {
+            pars <- cbind(alpha = p[obs$nFpar + 1:obs$nstr],
+                          kappa = exp(p[obs$nFpar + obs$nstr + 1:obs$nstr]))
+        } else  {
+            pars <- cbind(alpha = p[obs$nFpar + 1:obs$nstr],
+                          kappa = p[obs$nFpar + obs$nstr + 1:obs$nstr])
+        }
         beta <- p[-(1:(obs$nFpar + 2 * obs$nstr))]
     } else if (dist == "logskewnormal") {
-        pars <- cbind(mu    = p[obs$nFpar + 1:obs$nstr],
-                      sigma = exp(p[obs$nFpar + obs$nstr + 1:obs$nstr]),
-                      alpha = exp(p[obs$nFpar + 2 * obs$nstr + 1:obs$nstr]))
+        if (transform) {
+            pars <- cbind(mu    = p[obs$nFpar + 1:obs$nstr],
+                          sigma = exp(p[obs$nFpar + obs$nstr + 1:obs$nstr]),
+                          alpha = exp(p[obs$nFpar + 2 * obs$nstr + 1:obs$nstr]))
+        } else {
+            pars <- cbind(mu    = p[obs$nFpar + 1:obs$nstr],
+                          sigma = p[obs$nFpar + obs$nstr + 1:obs$nstr],
+                          alpha = p[obs$nFpar + 2 * obs$nstr + 1:obs$nstr])
+        }
         beta <- p[-(1:(obs$nFpar + 3 * obs$nstr))]
     }
     rownames(pars) <- levels(as.factor(obs$strata))

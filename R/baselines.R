@@ -28,7 +28,7 @@
 #    [2] lambda > 0                                                            #
 #                                                                              #
 #   Hazard:                                                                    #
-#    h(t) = \rho \lambda t ^ (\rho-1)                                            #
+#    h(t) = \rho \lambda t ^ (\rho-1)                                          #
 #                                                                              #
 #                                                                              #
 #   Date: December, 19, 2011                                                   #
@@ -36,7 +36,7 @@
 
 weibull <- function(pars,
                     t, 
-                    what){
+                    what) {
     if (what == "H")
         return(pars[2] * t ^ (pars[1]))
     else if (what == "lh")
@@ -46,29 +46,28 @@ weibull <- function(pars,
 
 ################################################################################
 #                                                                              #
-#   Inverse Weibull baseline hazard function                                   #
+#   Fréchet or Inverse Weibull baseline hazard function                        #
 #                                                                              #
 #   Parameters:                                                                #
 #    [1] rho    > 0                                                            #
 #    [2] lambda > 0                                                            #
 #                                                                              #
 #   Hazard:                                                                    #
-#    h(t) = [\rho / (\lambda t ^ (\rho + 1))] / [exp{1 /(\lambda t^\rho)} - 1]   #
-#    H(t) = log[exp{1 /(\lambda t^\rho)} - 1]                                  #
+#    h(t) = \lambda \rho t ^ -(\rho + 1) / (exp(\lambda t ^ -\rho) - 1)        #
+#    H(t) = -log[1 - exp{- \lambda t ^ -\rho}]                                 #
 #                                                                              #
 #                                                                              #
-#   Date:                 June, 26, 2012                                       #
-#   Last modification on: June, 27, 2012                                       #
+#   Date:              June, 26, 2012                                          #
+#   Last modification: January 31, 2017                                        #
 ################################################################################
-
-inweibull <- function(pars,
-                      t, 
-                      what){
+inweibull <- frechet <- function(pars,
+                                 t, 
+                                 what) {
     if (what == "H")
-        return(-log(1 - exp(-1 / (pars[2] * t ^ (pars[1])))))
+        return(-log(1 - exp(-pars[2] * (t ^ -pars[1]))))
     else if (what == "lh")
-        return(log(pars[1]) - log(pars[2]) - ((pars[1] + 1) * log(t)) -
-                   log(exp(1 / (pars[2] * t ^ (pars[1]))) - 1))
+        return(sum(log(pars[1:2])) - log(t) * (pars[1] + 1) -
+                   log(exp(pars[2] * (t ^ -pars[1])) - 1))
 }
 
 
@@ -88,7 +87,7 @@ inweibull <- function(pars,
 
 exponential <- function(pars,
                         t, 
-                        what){
+                        what) {
     if (what == "H")
         return(pars * t)
     else if (what == "lh") 
@@ -114,7 +113,7 @@ exponential <- function(pars,
 
 gompertz <- function(pars,
                      t, 
-                     what){
+                     what) {
     if (what == "H") 
         return(pars[2] / pars[1] * (exp(pars[1] * t) - 1))
     else if (what == "lh") 
@@ -144,7 +143,7 @@ gompertz <- function(pars,
 
 lognormal <- function(pars,
                       t, 
-                      what){
+                      what) {
     if (what == "H")  #return - log (S)
         return(- log(1 - plnorm(t, meanlog = pars[1], sdlog = pars[2])))
     else if (what == "lh")  #return log(f) - log(S)
@@ -167,13 +166,12 @@ lognormal <- function(pars,
 #             1 + \exp(\alpha) t^\kappa }                                      #
 #                                                                              #
 #                                                                              #
-#                                                                              #
 #   Date: December, 19, 2011                                                   #
 ################################################################################
 
 loglogistic <- function(pars,
                         t, 
-                        what){
+                        what) {
     if (what == "H") 
         return(log(1 + exp(pars[1]) * t ^ (pars[2])))
     else if (what == "lh") 
@@ -196,7 +194,8 @@ loglogistic <- function(pars,
 #    [3] alpha \in \mathbb R, the shape parameter                              #
 #                                                                              #
 #   Density:                                                                   #
-#    f(t) = 2  / t \phi_d((t - \xi) / \omega) \Phi(\alpha (t - \xi) / \omega)  #
+#    f(t) = 2  / (\omega t) \phi_d((\log(t) - \xi) / \omega)                   #
+#                                        \Phi(\alpha (log(t) - \xi) / \omega)  #
 #                                                                              #
 #                                                                              # 
 #   Author: Andrea Callegaro                                                   #
@@ -205,11 +204,12 @@ loglogistic <- function(pars,
 
 logskewnormal <- function(pars,
                           t, 
-                          what){
+                          what) {
     # library(sn)
     #log-skew normal density
     dlsn <- Vectorize(function(t, pars) {
-        1 / t * dsn(log(t), xi = pars[1], omega = pars[2], alpha = pars[3])
+        dsn(log(t), xi = pars[1], omega = pars[2], alpha = pars[3]
+        ) / t
     }, 't')
     #log-skew normal cdf
     plsn <- Vectorize(function(t, pars) {
@@ -223,3 +223,10 @@ logskewnormal <- function(pars,
         return(log(dlsn(t, pars = pars)) -
                    log(1 - plsn(t, pars = pars)))
 }
+
+
+# setGeneric('basehaz', package = 'survival')
+# setClass('parfm')
+# setMethod('basehaz', signature(fit = 'parfm'), function(fit, centered = TRUE) {
+#     return(fit)
+# })

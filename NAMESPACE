@@ -27,5 +27,6 @@ S3method(print,   select.parfm)
 import(msm, graphics, optimx, sn, survival)
 importFrom("stats", 
            "AIC", "BIC", "aggregate", "delete.response", "dlnorm", "formula",
-           "integrate", "model.matrix", "nlm", "optimize", "pchisq", "plnorm",
-           "pnorm", "qnorm", "symnum", "terms", "update.formula", "xtabs")
+           "integrate", "model.matrix", "nlm", "optimize", "optimHess",
+           "pchisq", "plnorm", "pnorm", "qnorm", "symnum", "terms",
+           "update.formula", "xtabs")

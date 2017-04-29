@@ -15,15 +15,15 @@ The \code{optim()} function is employed,
   and its \code{method} option is passed to \code{parfm()} (with \code{method="BFGS"} by default).
 If not specified in the \code{inip} option, 
   initial values for all but the heterogeneity parameter are obtained by fitting 
-  an unadjusted (i.e., without frailty) parametric proportional hazards model 
-  using the \code{phreg()}~function from the \pkg{eha}~package \citep{R:eha}.
+  an unadjusted (i.e., without frailty) parametric proportional hazards model.
 The initial heterogeneity parameter can also be specified by the user via the \code{iniFpar} option;
   otherwise it is set to $1$ when frailties follow a gamma or an inverse Gaussian distribution, 
   or to $1 \slash 2$ when they follow the positive stable distribution.
 
 % % % No frailty estimation % % % 
 Additionally, when \code{frailty="none"}, \code{parfm()} fits the unadjusted parametric proportional hazards model,
-  similar to \code{survreg()} (from the \pkg{survival} package) or to \code{phreg()}.
+  similar to \code{survreg()} (from the \pkg{survival} package) or to \code{phreg()}
+  \cite[from the \pkg{eha}~package;][]{R:eha}.
 However, \code{survreg()} returns the parameter estimates in the log-linear model 
   and \code{phreg()} uses yet another parametrisation (see the documentation).
 Often, the user has then to transform back the parameters 

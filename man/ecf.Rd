@@ -48,7 +48,6 @@ We also consider the binary covariate breed.
 }
 \examples{
 \donttest{
-library(parfm)
 data(ecf)
 head(ecf)
 

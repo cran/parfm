@@ -23,10 +23,8 @@
 }
 
 \examples{
-library(parfm)
-
 data(kidney) 
- # type 'help(kidney)' for a description of the data set
+# type 'help(kidney)' for a description of the data set
 kidney$sex <- kidney$sex - 1
 
 mod <- parfm(Surv(time,status) ~ sex + age, cluster = "id",
