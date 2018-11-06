@@ -68,8 +68,7 @@ asthma <- asthma[asthma$Fevent==0,]
 # Duchateau and Janssen (2008, page 56)                                        #
 ################################################################################
 # Calendar time
-parfm(Surv(Begin, End, Status) ~ Drug, cluster = "Patid", 
-      data = asthma,
+parfm(Surv(Begin, End, Status) ~ Drug, cluster = "Patid", data = asthma,
       dist = "weibull", frailty = "gamma")
 
 # Gap time

@@ -190,7 +190,7 @@ parfm(Surv(time,status) ~ sex + age, cluster = "id",
 
 
 parfm(Surv(time,status) ~ sex + age, cluster = "id",
-      data = kidney, dist="gompertz", frailty="logskewnormal")
+      data = kidney, dist="logskewnormal", frailty="possta", method = 'BFGS')
 #--------------------------
 
 #------Asthma dataset------
@@ -201,7 +201,6 @@ head(asthma)
 asthma$time <- asthma$End - asthma$Begin
 parfm(Surv(time, Status) ~ Drug, cluster = "Patid", data = asthma,
       dist = "weibull", frailty = "gamma")
-      
       
 parfm(Surv(time, Status) ~ Drug, cluster = "Patid", data = asthma,
       dist = "weibull", frailty = "lognormal")
