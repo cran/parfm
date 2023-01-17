@@ -109,7 +109,7 @@ Of note, if \eqn{\alpha=0}{alpha=0} then the log-skew-normal boils down
 \strong{Frailty distributions}
 
 The gamma frailty distribution (\code{frailty="gamma"}) is
-\deqn{f ( u ) = \frac{\theta^{-\frac{1}{\theta}} u^{\frac{1}{\theta} - 1} \exp \left( - u \slash \theta \right)}	{\Gamma ( 1 \slash \theta )}}{
+\deqn{f ( u ) = \frac{\theta^{-\frac{1}{\theta}} u^{\frac{1}{\theta} - 1} \exp \left( - u / \theta \right)}	{\Gamma ( 1 / \theta )}}{
 f(u) = [theta^(-1 / theta) * u^(1 / theta - 1) * exp(-u / theta)] / [Gamma(1 / theta)]}
 with \eqn{\theta > 0}{theta > 0} and where \eqn{\Gamma ( \cdot )}{Gamma(.)} is the gamma function.
 
@@ -138,7 +138,7 @@ As the Laplace tranform of the lognormal frailties does not exist in closed form
   Munda M, Rotolo F, Legrand C (2012).
   parfm: Parametric Frailty Models in R.
   Journal of Statistical Software, 51(11), 1-20. 
-  DOI \href{http://dx.doi.org/10.18637/jss.v051.i11}{10.18637/jss.v051.i11}
+  DOI <\doi{10.18637/jss.v051.i11}>
 
   Duchateau L, Janssen P (2008). The frailty model. Springer.
 
@@ -149,13 +149,11 @@ As the Laplace tranform of the lognormal frailties does not exist in closed form
   Goutis C, Casella G (1999).
   Explaining the Saddlepoint Approximation.
   The American Statistician 53(3), 216-224.
-  DOI \href{http://dx.doi.org/10.1080/00031305.1999.10474463}{10.1080/00031305.1999.10474463}
+  DOI <\doi{10.1080/00031305.1999.10474463}>
     
  Azzalini A (1985).
  A class of distributions which includes the normal ones.
  Scandinavian Journal of Statistics, 12(2):171-178.
- URL \url{http://www.jstor.org/stable/4615982}
-
 }
 \author{
   \packageAuthor{parfm}

@@ -43,12 +43,9 @@
   F. Rotolo and M. Munda. 
   Original text and data by L. Duchateau and P. Janssen.
 }
-\source{Example 1.9 of Duchateau an Janssen (2008)
-  \url{http://www.vetstat.ugent.be/research/frailty/datasets/}}
+\source{Example 1.9 of Duchateau an Janssen (2008)}
 \note{
-  These data are downloaded from
-    \url{http://www.vetstat.ugent.be/research/frailty/datasets/}.
-  They are simulated data, with exactly
+  These data simulated, with exactly
     the same structure as the real data used in the book,
     that could not be made publicly available.    
 }

@@ -12,7 +12,7 @@
   Kendall, MG. (1938)
   A new measure of rank correlation.
   Biometrika 30(1/2), 81-93.
-  DOI:   DOI \href{http://dx.doi.org/10.2307/2332226}{10.2307/2332226}
+  DOI: <\doi{10.2307/2332226}>
 }
 \author{
   \packageAuthor{parfm}

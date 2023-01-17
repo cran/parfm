@@ -70,12 +70,9 @@ The difference in teat end condition between front and rear quarters
       \code{RR}=Right-Rear).}
   }
 }
-\source{Example 1.4 of Duchateau an Janssen (2008)
-  \url{http://www.vetstat.ugent.be/research/frailty/datasets/}}
+\source{Example 1.4 of Duchateau an Janssen (2008)}
 \note{
-  These data are downloaded from
-    \url{http://www.vetstat.ugent.be/research/frailty/datasets/}.
-  They are simulated data, with exactly
+  These data simulated, with exactly
     the same structure as the real data used in the book,
     that could not be made publicly available.    
 }

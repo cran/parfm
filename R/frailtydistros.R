@@ -69,7 +69,12 @@ fr.gamma <- function(k,
                      s, 
                      theta, 
                      what="logLT"){
+    # if (!(is.numeric(theta) && (theta > 0)))
+    #     stop("The parameter theta is not positive.")
+    
     if (what=="logLT") {
+        # if (!(is.numeric(s) && (s > 0)))
+        #     stop("The parameter s is not positive.")
         res <- ifelse(k == 0, 
                       - 1 / theta  * log(1 + theta * s),
                       - (k + 1 / theta) * log(1 + theta * s) +
@@ -103,7 +108,12 @@ fr.ingau <- function(k,
                      s, 
                      theta, 
                      what="logLT"){
+    # if (!(is.numeric(theta) && (theta > 0)))
+    #     stop("The parameter theta is not positive.")
+    
     if (what=="logLT") {
+        # if (!(is.numeric(s) && (s > 0)))
+        #     stop("The parameter s is not positive.")
         # separate sqrt's for numerical reasons in case of very small theta!
         z <- theta ^ (-0.5) * sqrt(2 * s + theta ^ (-1))
         res <- ifelse(k == 0,
@@ -177,7 +187,14 @@ fr.possta <- function(k,
                       Omega,
                       what="logLT",
                       correct){
+    # if (!(is.numeric(nu) && (nu > 0) && (nu < 1)))
+    #     stop("The parameter nu is not a numeric value in (0, 1).")
+    
     if (what=="logLT") {
+        # if (!(is.numeric(k) && (k > 0) && (k %% 1 == 0)))
+        #     stop("The parameter k must be a non-negative integer")
+        # if (!(is.numeric(s) && (s > 0)))
+        #     stop("The parameter s is not positive.")
         res <- k * (log(1 - nu) - nu * log(s)) - s^(1 - nu) + 
             log(J(k, s, nu, Omega, correct))
         return(res)
@@ -199,7 +216,7 @@ fr.possta <- function(k,
 #   Arguments of fr.lognormal:                                                 #
 #     [1] k = 0, 1, ...                                                        #
 #     [2] s > 0                                                                #
-#     [3] sigma > 0                                                            #
+#     [3] sigma2 > 0                                                           #
 #                                                                              #
 #   Date: October 16, 2012                                                     #
 #   Last modification on: September 2, 2015                                    #
@@ -235,7 +252,12 @@ fr.lognormal <- function(k,
                          s,
                          sigma2,
                          what = "logLT") {
+    # if (!(is.numeric(sigma2) && (sigma2 > 0)))
+        # stop("The parameter sigma2 is not a positive value.")
+    
     if (what == "logLT") {
+        # if (!(is.numeric(s) && (s > 0)))
+        #     stop("The parameter s is not positive.")
         # Find wTilde = max(g(w)) so that g'(wTilde; k, s, theta) = 0
         WARN <- getOption("warn")
         options(warn = -1)

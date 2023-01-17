@@ -22,7 +22,7 @@
 #   - dist     : the baseline hazard;                                          #
 #   - frailty  : the frailty distribution;                                     #
 #   - method   : the optimisation method (See optim());                        #
-#   - maxit    : the mamumum number of iterations (See optim());               #
+#   - maxit    : the maximum number of iterations (See optim());               #
 #   - Fparscale: the scaling value for all the frailty parameter(s) in optim() #
 #                Optimisation is performed on Fpar/Fparscale                   #
 #   - showtime : is the execution time displayed?                              #
@@ -58,8 +58,8 @@ parfm <- function(formula,
                   correct   = 0){
     if (missing(data)) {
         data <- eval(parse(text = paste("data.frame(", 
-                                      paste(all.vars(formula), collapse = ", "),
-                                      ")")))
+                                        paste(all.vars(formula), collapse = ", "),
+                                        ")")))
     }
     
     #----- Check the baseline hazard and the frailty distribution ---------------#
@@ -257,16 +257,18 @@ parfm <- function(formula,
                 log(p.init[obsdata$nstr + 1:obsdata$nstr]) 
         }
     } else {
-        sink('NUL')
-        inires <- optimx(par = rep(0, nRpar + nBpar),
-                         fn = optMloglikelihood, method = method,
-                         obs = obsdata, dist = dist, frailty = 'none',
-                         correct = correct,
-                         hessian = FALSE,
-                         control = list(maxit = maxit,
-                                        starttests = FALSE,
-                                        dowarn = FALSE))
-        sink()
+        inires <- optimx(
+            par = rep(0, nRpar + nBpar),
+            fn = optMloglikelihood, 
+            method = method,
+            obs = obsdata, dist = dist, frailty = 'none',
+            correct = correct,
+            hessian = FALSE,
+            control = list(maxit = maxit,
+                           starttests = FALSE,
+                           trace = 0,
+                           dowarn = FALSE)
+        )
         p.init <- inires[1:(nRpar + nBpar)]
         rm(inires)
     }
@@ -296,23 +298,26 @@ parfm <- function(formula,
     #--------------------------------------------------------------------------#
     #----- Minimise Mloglikelihood() ------------------------------------------#
     #--------------------------------------------------------------------------#
-    sink('NUL')
     todo <- expression({
-        res <- optimx(par = pars, fn = optMloglikelihood, method = method,
-                      obs = obsdata, dist = dist, frailty = frailty,
-                      correct = correct,
-                      hessian = FALSE,
-                      control = list(maxit = maxit,
-                                     starttests = FALSE,
-                                     dowarn = FALSE))
-        })
+        res <- optimx(
+            par = pars, 
+            fn = optMloglikelihood, 
+            method = method,
+            obs = obsdata, dist = dist, frailty = frailty,
+            correct = correct,
+            hessian = FALSE,
+            control = list(maxit = maxit,
+                           starttests = FALSE,
+                           trace = 0,
+                           dowarn = FALSE)
+        )
+    })
     if (showtime) {
         extime <- system.time(eval(todo))[1]
     } else {
         eval(todo)
         extime <- NULL
     }
-    sink()
     #--------------------------------------------------------------------------#
     
     if (res$convcode > 0) {
@@ -398,12 +403,14 @@ parfm <- function(formula,
     #----- Recover the standard errors ----------------------------------------#
     #--------------------------------------------------------------------------#
     resHessian <- # attr(res, 'details')[1, 'nhatend'][[1]]
-        optimHess(par = ESTIMATE, fn = Mloglikelihood, 
-                  obs = obsdata, dist = dist, frailty = frailty,
-                  correct = correct, transform = FALSE)
+        suppressWarnings(
+            optimHess(par = ESTIMATE, fn = Mloglikelihood, 
+                      obs = obsdata, dist = dist, frailty = frailty,
+                      correct = correct, transform = FALSE)
+        )    
     
     var <- try(diag(solve(resHessian)), silent=TRUE)
-    if (class(var) == "try-error" | any(is.nan(var))) {
+    if (inherits(var, "try-error") | any(is.nan(var))) {
         warning(var[1])
         STDERR <- rep(NA, nFpar + nBpar * obsdata$nstr + nRpar)
         PVAL <- rep(NA, nFpar + nBpar * obsdata$nstr + nRpar)

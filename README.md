@@ -1,5 +1,4 @@
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/parfm)](https://cran.r-project.org/package=parfm)
-[![Build Status](https://travis-ci.org/Oncostat/parfm.svg?branch=master)](https://travis-ci.org/Oncostat/parfm)
 
 # `parfm`, Parametric Frailty Models in `R`
 Federico Rotolo and Marco Munda
@@ -132,7 +131,7 @@ Duchateau L, Janssen P (2008). *The frailty model*. Springer.
 Goutis C, Casella G (1999).
   Explaining the Saddlepoint Approximation.
   *The American Statistician*, **53**(3):216-224.
-[http://dx.doi.org/10.1080/00031305.1999.10474463](10.1080/00031305.1999.10474463).
+[10.1080/00031305.1999.10474463](http://dx.doi.org/10.1080/00031305.1999.10474463).
 
 Munda M, Rotolo F, Legrand C (2012).
   parfm: Parametric Frailty Models in R.

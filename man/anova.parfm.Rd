@@ -34,7 +34,7 @@
 }
 
 \section{Warning}{
-  The comparison between two or more models by \code{anova}
+  The comparison between two or more models by \code{anova.parfm()}
    will only be valid if they
   are fitted to the same dataset. This may be a problem if there are
   missing values.}
@@ -48,10 +48,10 @@
 }
 
 \references{
-  Marco Munda, Federico Rotolo, Catherine Legrand (2012).
+  Munda M, Rotolo F, Legrand C (2012).
   parfm: Parametric Frailty Models in R.
   Journal of Statistical Software, 51(11), 1-20. 
-  URL http://www.jstatsoft.org/v51/i11/.
+  DOI <\doi{10.18637/jss.v051.i11}>
   }
   
 \examples{

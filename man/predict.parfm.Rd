@@ -25,7 +25,7 @@
   Munda M, Rotolo F, Legrand C (2012).
   parfm: Parametric Frailty Models in R.
   Journal of Statistical Software, 51(11), 1-20. 
-  DOI \href{http://dx.doi.org/10.18637/jss.v051.i11}{10.18637/jss.v051.i11}
+  DOI <\doi{10.18637/jss.v051.i11}>
 }
 
 \author{
